@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -75,8 +74,22 @@ export default {
 				'light-gray': '#F0F0F0',
 			},
 			fontFamily: {
-				'display': ['Inter', 'sans-serif'],
-				'body': ['Inter', 'sans-serif'],
+				'display': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+				'body': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+			},
+			fontSize: {
+				'xs': ['11px', { lineHeight: '16px' }],
+				'sm': ['13px', { lineHeight: '18px' }],
+				'base': ['14px', { lineHeight: '20px' }],
+				'lg': ['16px', { lineHeight: '24px' }],
+				'xl': ['18px', { lineHeight: '28px' }],
+				'2xl': ['20px', { lineHeight: '28px' }],
+				'3xl': ['24px', { lineHeight: '32px' }],
+				'4xl': ['28px', { lineHeight: '36px' }],
+				'5xl': ['32px', { lineHeight: '40px' }],
+				'6xl': ['36px', { lineHeight: '44px' }],
+				'7xl': ['42px', { lineHeight: '48px' }],
+				'8xl': ['48px', { lineHeight: '56px' }],
 			},
 			backgroundImage: {
 				'hero-gradient': 'linear-gradient(135deg, #FAFAFA, #F5F5F5)',
@@ -85,27 +98,27 @@ export default {
 				'section-gradient': 'linear-gradient(135deg, #E4DEFA, #D9F5F2)',
 			},
 			animation: {
-				'fade-in': 'fadeIn 0.8s ease-out',
-				'slide-up': 'slideUp 0.6s ease-out',
+				'fade-in': 'fadeIn 0.6s ease-out',
+				'slide-up': 'slideUp 0.5s ease-out',
 				'float': 'float 3s ease-in-out infinite',
 				'gentle-bounce': 'gentleBounce 2s ease-in-out infinite',
 			},
 			keyframes: {
 				fadeIn: {
-					'0%': { opacity: '0', transform: 'translateY(20px)' },
+					'0%': { opacity: '0', transform: 'translateY(15px)' },
 					'100%': { opacity: '1', transform: 'translateY(0)' }
 				},
 				slideUp: {
-					'0%': { opacity: '0', transform: 'translateY(40px)' },
+					'0%': { opacity: '0', transform: 'translateY(30px)' },
 					'100%': { opacity: '1', transform: 'translateY(0)' }
 				},
 				float: {
 					'0%, 100%': { transform: 'translateY(0px)' },
-					'50%': { transform: 'translateY(-10px)' }
+					'50%': { transform: 'translateY(-8px)' }
 				},
 				gentleBounce: {
 					'0%, 100%': { transform: 'translateY(0)' },
-					'50%': { transform: 'translateY(-8px)' }
+					'50%': { transform: 'translateY(-6px)' }
 				}
 			},
 			backdropBlur: {

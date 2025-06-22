@@ -13,22 +13,39 @@ const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
+  const smoothScrollTo = (targetId: string) => {
+    const element = document.getElementById(targetId);
     if (element) {
-      element.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
+      const targetY = element.offsetTop - 80;
+      const startY = window.pageYOffset;
+      const distance = targetY - startY;
+      const duration = 1000;
+      let startTime: number | null = null;
+
+      const animation = (currentTime: number) => {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        
+        // Apple-style easing
+        const ease = progress < 0.5 
+          ? 4 * progress * progress * progress 
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        
+        window.scrollTo(0, startY + distance * ease);
+        
+        if (timeElapsed < duration) {
+          requestAnimationFrame(animation);
+        }
+      };
+
+      requestAnimationFrame(animation);
     }
     setIsMobileMenuOpen(false);
   };
 
   const scrollToTop = () => {
-    window.scrollTo({ 
-      top: 0, 
-      behavior: 'smooth' 
-    });
+    smoothScrollTo('home');
   };
 
   return (
@@ -38,45 +55,45 @@ const Navigation = () => {
         : 'bg-transparent'
     }`}>
       <div className="container-width">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <div className="flex items-center">
             <button 
               onClick={scrollToTop}
-              className="text-xl font-bold text-deep-black hover:text-champagne-gold transition-colors duration-300"
+              className="text-lg font-semibold text-deep-black hover:text-champagne-gold transition-colors duration-300"
             >
               Truth Bomb
             </button>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             <button 
-              onClick={() => scrollToSection('philosophy')}
+              onClick={() => smoothScrollTo('philosophy')}
               className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
             >
               Philosophy
             </button>
             <button 
-              onClick={() => scrollToSection('features')}
+              onClick={() => smoothScrollTo('features')}
               className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
             >
               Features
             </button>
             <button 
-              onClick={() => scrollToSection('interface-showcase')}
+              onClick={() => smoothScrollTo('interface-showcase')}
               className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
             >
               App Preview
             </button>
             <button 
-              onClick={() => scrollToSection('community')}
+              onClick={() => smoothScrollTo('community')}
               className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
             >
               Community
             </button>
             <button 
-              onClick={() => scrollToSection('pricing')}
+              onClick={() => smoothScrollTo('pricing')}
               className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
             >
               Pricing
@@ -85,7 +102,7 @@ const Navigation = () => {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <button className="bg-cta-gradient text-white font-medium text-sm px-6 py-2.5 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-blush-rose/20">
+            <button className="bg-cta-gradient text-white font-medium text-sm px-5 py-2 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-blush-rose/20">
               Download Now
             </button>
           </div>
@@ -101,39 +118,39 @@ const Navigation = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-lg">
-            <div className="px-4 py-6 space-y-4">
+          <div className="md:hidden absolute top-14 left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-lg">
+            <div className="px-4 py-4 space-y-3">
               <button 
-                onClick={() => scrollToSection('philosophy')}
-                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
+                onClick={() => smoothScrollTo('philosophy')}
+                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left py-2"
               >
                 Philosophy
               </button>
               <button 
-                onClick={() => scrollToSection('features')}
-                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
+                onClick={() => smoothScrollTo('features')}
+                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left py-2"
               >
                 Features
               </button>
               <button 
-                onClick={() => scrollToSection('interface-showcase')}
-                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
+                onClick={() => smoothScrollTo('interface-showcase')}
+                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left py-2"
               >
                 App Preview
               </button>
               <button 
-                onClick={() => scrollToSection('community')}
-                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
+                onClick={() => smoothScrollTo('community')}
+                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left py-2"
               >
                 Community
               </button>
               <button 
-                onClick={() => scrollToSection('pricing')}
-                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
+                onClick={() => smoothScrollTo('pricing')}
+                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left py-2"
               >
                 Pricing
               </button>
-              <button className="w-full bg-cta-gradient text-white font-medium text-sm px-6 py-2.5 rounded-xl transition-all duration-300 hover:scale-105 mt-4">
+              <button className="w-full bg-cta-gradient text-white font-medium text-sm px-5 py-2 rounded-lg transition-all duration-300 hover:scale-105 mt-3">
                 Download Now
               </button>
             </div>

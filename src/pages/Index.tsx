@@ -12,15 +12,55 @@ import SoloLevelingNotification from '../components/SoloLevelingNotification';
 
 const Index = () => {
   useEffect(() => {
-    // Enhanced Apple-style scroll animation system
-    let ticking = false;
+    let scrollTimeout: NodeJS.Timeout;
+    let isScrolling = false;
 
-    const observerOptions = {
-      threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
-      rootMargin: '-5% 0px -5% 0px'
+    // Apple-style scrollbar visibility
+    const showScrollbar = () => {
+      document.body.classList.add('scrolling');
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        document.body.classList.remove('scrolling');
+      }, 1000);
     };
 
-    // Smooth scroll observer for fade-in animations
+    // Enhanced smooth scroll function
+    const smoothScrollTo = (targetY: number, duration: number = 800) => {
+      const startY = window.pageYOffset;
+      const distance = targetY - startY;
+      let startTime: number | null = null;
+
+      // Add smooth scrolling class to hide scrollbar
+      document.body.classList.add('smooth-scrolling');
+
+      const animation = (currentTime: number) => {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        
+        // Apple-style easing function
+        const ease = progress < 0.5 
+          ? 4 * progress * progress * progress 
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        
+        window.scrollTo(0, startY + distance * ease);
+        
+        if (timeElapsed < duration) {
+          requestAnimationFrame(animation);
+        } else {
+          document.body.classList.remove('smooth-scrolling');
+        }
+      };
+
+      requestAnimationFrame(animation);
+    };
+
+    // Enhanced scroll observer
+    const observerOptions = {
+      threshold: [0, 0.1, 0.3, 0.5, 0.7, 1],
+      rootMargin: '-10% 0px -10% 0px'
+    };
+
     const scrollObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         const target = entry.target as HTMLElement;
@@ -29,59 +69,43 @@ const Index = () => {
         if (entry.isIntersecting && ratio > 0.1) {
           target.classList.add('in-view');
           
-          // Stagger child animations
+          // Stagger child animations with reduced delay
           const children = target.querySelectorAll('.stagger-item');
           children.forEach((child, index) => {
             setTimeout(() => {
               (child as HTMLElement).style.opacity = '1';
               (child as HTMLElement).style.transform = 'translateY(0)';
-            }, index * 100);
+            }, index * 60);
           });
         }
       });
     }, observerOptions);
 
-    // Global scroll handler for parallax and smooth effects
+    // Optimized scroll handler
+    let ticking = false;
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
+          showScrollbar();
+          
           const scrolled = window.pageYOffset;
           const viewHeight = window.innerHeight;
-          const docHeight = document.documentElement.scrollHeight;
-          const scrollProgress = scrolled / (docHeight - viewHeight);
 
-          // Smooth parallax for background elements
+          // Reduced parallax effects for smoother performance
           const parallaxElements = document.querySelectorAll('.parallax-bg');
           parallaxElements.forEach((element, index) => {
-            const speed = 0.5 + (index * 0.1);
+            const speed = 0.3 + (index * 0.05);
             const yPos = -(scrolled * speed);
             (element as HTMLElement).style.transform = `translate3d(0, ${yPos}px, 0)`;
           });
 
-          // Floating background animations
+          // Subtle floating animations
           const floatingElements = document.querySelectorAll('.floating-bg');
           floatingElements.forEach((element, index) => {
-            const speed = 0.02 + (index * 0.01);
-            const rotation = scrolled * speed * 0.1;
-            const yPos = Math.sin(scrolled * 0.001 + index) * 20;
+            const speed = 0.01 + (index * 0.005);
+            const yPos = Math.sin(scrolled * 0.0005 + index) * 10;
             (element as HTMLElement).style.transform = 
-              `translate3d(0, ${scrolled * speed + yPos}px, 0) rotate(${rotation}deg)`;
-          });
-
-          // Sticky parallax elements
-          const stickyElements = document.querySelectorAll('.sticky-parallax');
-          stickyElements.forEach((element) => {
-            const rect = element.getBoundingClientRect();
-            const elementTop = rect.top;
-            const elementHeight = rect.height;
-            const windowHeight = window.innerHeight;
-            
-            // Calculate if element is in viewport
-            if (elementTop < windowHeight && elementTop + elementHeight > 0) {
-              const progress = Math.max(0, Math.min(1, (windowHeight - elementTop) / (windowHeight + elementHeight)));
-              const translateY = (progress - 0.5) * 50;
-              (element as HTMLElement).style.transform = `translate3d(0, ${translateY}px, 0)`;
-            }
+              `translate3d(0, ${scrolled * speed + yPos}px, 0)`;
           });
 
           // Progressive reveal animations
@@ -89,10 +113,8 @@ const Index = () => {
           revealElements.forEach((element) => {
             const rect = element.getBoundingClientRect();
             const elementTop = rect.top;
-            const elementHeight = rect.height;
-            const windowHeight = window.innerHeight;
             
-            if (elementTop < windowHeight * 0.8) {
+            if (elementTop < viewHeight * 0.85) {
               (element as HTMLElement).classList.add('revealed');
             }
           });
@@ -103,28 +125,19 @@ const Index = () => {
       }
     };
 
-    // Smooth scroll behavior for the entire page
-    const smoothScrollTo = (target: number, duration: number = 1000) => {
-      const start = window.pageYOffset;
-      const distance = target - start;
-      let startTime: number | null = null;
-
-      const animation = (currentTime: number) => {
-        if (startTime === null) startTime = currentTime;
-        const timeElapsed = currentTime - startTime;
-        const progress = Math.min(timeElapsed / duration, 1);
+    // Smooth navigation for anchor links
+    const handleAnchorClick = (e: Event) => {
+      const target = e.target as HTMLAnchorElement;
+      if (target.tagName === 'A' && target.getAttribute('href')?.startsWith('#')) {
+        e.preventDefault();
+        const targetId = target.getAttribute('href')?.substring(1);
+        const targetElement = document.getElementById(targetId || '');
         
-        // Easing function (ease-out cubic)
-        const ease = 1 - Math.pow(1 - progress, 3);
-        
-        window.scrollTo(0, start + distance * ease);
-        
-        if (timeElapsed < duration) {
-          requestAnimationFrame(animation);
+        if (targetElement) {
+          const targetY = targetElement.offsetTop - 80; // Account for fixed nav
+          smoothScrollTo(targetY, 1000);
         }
-      };
-
-      requestAnimationFrame(animation);
+      }
     };
 
     // Initialize observers and event listeners
@@ -132,98 +145,20 @@ const Index = () => {
     animatedElements.forEach((el) => scrollObserver.observe(el));
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    document.addEventListener('click', handleAnchorClick);
 
-    // Enhanced CSS for smooth animations
-    const style = document.createElement('style');
-    style.textContent = `
-      .animate-on-scroll {
-        opacity: 0;
-        transform: translateY(60px);
-        transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-      }
-      
-      .animate-on-scroll.in-view {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      
-      .fade-in-up {
-        opacity: 0;
-        transform: translateY(40px);
-        transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-      }
-      
-      .fade-in-up.in-view {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      
-      .scale-in {
-        opacity: 0;
-        transform: scale(0.9);
-        transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
-      }
-      
-      .scale-in.in-view {
-        opacity: 1;
-        transform: scale(1);
-      }
-      
-      .stagger-item {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-      }
-      
-      .reveal-on-scroll {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.6s ease-out;
-      }
-      
-      .reveal-on-scroll.revealed {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      
-      .parallax-bg {
-        will-change: transform;
-      }
-      
-      .floating-bg {
-        will-change: transform;
-      }
-      
-      .sticky-parallax {
-        will-change: transform;
-      }
-      
-      /* Smooth scrolling for the entire page */
-      html {
-        scroll-behavior: smooth;
-      }
-      
-      /* Enhanced section transitions */
-      section {
-        position: relative;
-        z-index: 1;
-      }
-      
-      /* Improved mobile performance */
-      @media (max-width: 768px) {
-        .parallax-bg,
-        .floating-bg {
-          transform: none !important;
-        }
-      }
-    `;
-    document.head.appendChild(style);
+    // Add scroll snap to sections
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+      section.classList.add('scroll-snap-section');
+    });
 
     // Cleanup
     return () => {
       scrollObserver.disconnect();
       window.removeEventListener('scroll', handleScroll);
-      document.head.removeChild(style);
+      document.removeEventListener('click', handleAnchorClick);
+      clearTimeout(scrollTimeout);
     };
   }, []);
 
@@ -233,25 +168,39 @@ const Index = () => {
       <Navigation />
 
       {/* Hero Section */}
-      <HeroSection />
+      <section id="home" className="scroll-snap-section">
+        <HeroSection />
+      </section>
 
       {/* Philosophy Section */}
-      <PhilosophySection />
+      <section id="philosophy" className="scroll-snap-section">
+        <PhilosophySection />
+      </section>
 
       {/* Features Section */}
-      <FeaturesSection />
+      <section id="features" className="scroll-snap-section">
+        <FeaturesSection />
+      </section>
 
       {/* Interface Showcase */}
-      <InterfaceShowcase />
+      <section id="interface-showcase" className="scroll-snap-section">
+        <InterfaceShowcase />
+      </section>
 
       {/* Community Section */}
-      <CommunitySection />
+      <section id="community" className="scroll-snap-section">
+        <CommunitySection />
+      </section>
 
       {/* Pricing Section */}
-      <PricingSection />
+      <section id="pricing" className="scroll-snap-section">
+        <PricingSection />
+      </section>
 
       {/* Final CTA Section */}
-      <FinalCTASection />
+      <section id="cta" className="scroll-snap-section">
+        <FinalCTASection />
+      </section>
 
       {/* Solo Leveling Notification */}
       <SoloLevelingNotification />
@@ -260,22 +209,22 @@ const Index = () => {
       <FloatingQRWidget />
 
       {/* Footer */}
-      <footer className="bg-warm-gray py-12 animate-on-scroll">
+      <footer className="bg-warm-gray py-8 animate-on-scroll">
         <div className="container-width">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
-              <span className="text-2xl font-bold text-deep-black">Truth Bomb</span>
+              <span className="text-lg font-semibold text-deep-black">Truth Bomb</span>
             </div>
             
-            <div className="flex space-x-6 text-slate-gray">
+            <div className="flex space-x-6 text-slate-gray text-sm">
               <a href="#" className="hover:text-deep-black transition-colors">Privacy</a>
               <a href="#" className="hover:text-deep-black transition-colors">Terms</a>
               <a href="#" className="hover:text-deep-black transition-colors">Support</a>
             </div>
           </div>
           
-          <div className="text-center mt-8 pt-8 border-t border-gray-200">
-            <p className="text-slate-gray">
+          <div className="text-center mt-6 pt-6 border-t border-gray-200">
+            <p className="text-slate-gray text-sm">
               © 2024 Truth Bomb. Designed with love for mindful growth.
             </p>
           </div>
