@@ -1,9 +1,9 @@
-
 import React, { useEffect, useRef } from 'react';
-import { Play, ArrowDown } from 'lucide-react';
+import { Play, ArrowDown, Home, BookOpen, Target, MessageCircle, User } from 'lucide-react';
 
 const HeroSection = () => {
   const phoneRef = useRef<HTMLDivElement>(null);
+  const mobileAppRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Gentle parallax effect on scroll
@@ -12,6 +12,12 @@ const HeroSection = () => {
         const scrolled = window.pageYOffset;
         const rate = scrolled * -0.2;
         phoneRef.current.style.transform = `translateY(${rate}px)`;
+      }
+
+      if (mobileAppRef.current) {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.1;
+        mobileAppRef.current.style.transform = `translateY(${rate}px)`;
       }
     };
 
@@ -75,68 +81,86 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Right Content - Phone Mockup with scale animation */}
-          <div className="flex justify-center lg:justify-end -mt-16">
+          {/* Right Content - Enhanced Mobile App Preview */}
+          <div className="flex justify-center lg:justify-end relative">
+            {/* Floating Mobile App Preview */}
             <div 
-              ref={phoneRef}
+              ref={mobileAppRef}
               className="relative w-80 h-[650px] scale-on-scroll sticky-parallax"
             >
               {/* Phone Frame */}
-              <div className="absolute inset-0 bg-gradient-to-b from-gray-800 to-gray-900 rounded-[3rem] p-2 gentle-shadow">
+              <div className="absolute inset-0 bg-gradient-to-b from-gray-800 to-gray-900 rounded-[3rem] p-3 gentle-shadow">
                 {/* Screen */}
-                <div className="h-full bg-white rounded-[2.5rem] overflow-hidden relative">
-                  {/* Mock App Interface */}
-                  <div className="h-full bg-gradient-to-b from-soft-white to-warm-gray p-6">
-                    {/* Status Bar */}
-                    <div className="flex justify-between items-center mb-8 text-xs text-slate-gray">
-                      <span className="font-semibold">9:41</span>
-                      <div className="flex space-x-1">
-                        <div className="w-4 h-2 bg-champagne-gold rounded-sm"></div>
-                        <div className="w-4 h-2 bg-champagne-gold rounded-sm opacity-70"></div>
-                        <div className="w-4 h-2 bg-gray-300 rounded-sm"></div>
+                <div className="h-full bg-gradient-to-br from-soft-white to-warm-gray rounded-[2.5rem] overflow-hidden relative">
+                  {/* Status Bar */}
+                  <div className="flex justify-between items-center px-6 pt-4 pb-2 text-xs text-slate-gray">
+                    <span className="font-semibold">9:41</span>
+                    <div className="flex space-x-1">
+                      <div className="w-4 h-2 bg-champagne-gold rounded-sm"></div>
+                      <div className="w-4 h-2 bg-champagne-gold rounded-sm opacity-70"></div>
+                      <div className="w-4 h-2 bg-gray-300 rounded-sm"></div>
+                    </div>
+                  </div>
+
+                  {/* App Content */}
+                  <div className="px-6 pb-6 h-full flex flex-col">
+                    {/* Header */}
+                    <div className="text-center mb-6">
+                      <div className="text-2xl mb-2">🌅</div>
+                      <h3 className="text-lg font-semibold text-deep-black">Good Morning!</h3>
+                      <p className="text-sm text-slate-gray">Ready for today's growth?</p>
+                    </div>
+                    
+                    {/* Daily Truth Card */}
+                    <div className="premium-card p-6 mb-6 gentle-shadow">
+                      <h4 className="font-medium text-deep-black mb-3 text-sm">Today's Truth</h4>
+                      <p className="text-slate-gray text-sm leading-relaxed italic mb-3">
+                        "The best time to plant a tree was 20 years ago. The second best time is now."
+                      </p>
+                      <p className="text-xs text-champagne-gold font-medium">— Chinese Proverb</p>
+                    </div>
+                    
+                    {/* Progress Row */}
+                    <div className="grid grid-cols-2 gap-3 mb-6">
+                      <div className="bg-gradient-to-r from-blush-rose to-champagne-gold text-white p-4 rounded-xl text-center gentle-shadow">
+                        <div className="text-lg font-semibold">7</div>
+                        <div className="text-xs opacity-90">Day Streak</div>
+                      </div>
+                      <div className="bg-gradient-to-r from-soft-lavender to-pale-aqua text-white p-4 rounded-xl text-center gentle-shadow">
+                        <div className="text-lg font-semibold">3</div>
+                        <div className="text-xs opacity-90">Active Goals</div>
                       </div>
                     </div>
 
-                    {/* App Content */}
-                    <div className="space-y-6">
-                      <div className="text-center">
-                        <h3 className="text-2xl font-bold text-deep-black mb-4">Today's Truth</h3>
-                        <div className="premium-card p-6 gentle-shadow">
-                          <p className="text-lg italic text-deep-black leading-relaxed">
-                            "The unexamined life is not worth living"
-                          </p>
-                          <p className="text-sm text-slate-gray mt-3 font-medium">— Socrates</p>
-                        </div>
-                      </div>
+                    {/* Daily Intention */}
+                    <div className="premium-card p-4 mb-6">
+                      <p className="text-xs text-slate-gray mb-2">Today's Intention</p>
+                      <p className="text-sm text-deep-black italic">"Focus on progress, not perfection"</p>
+                    </div>
 
-                      <div className="space-y-4">
-                        <div className="premium-card p-4 flex items-center space-x-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-blush-rose to-champagne-gold rounded-xl flex items-center justify-center">
-                            <span className="text-xl">📊</span>
+                    {/* Bottom Navigation */}
+                    <div className="mt-auto">
+                      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-3 gentle-shadow">
+                        <div className="flex justify-around items-center">
+                          <div className="flex flex-col items-center space-y-1 text-champagne-gold">
+                            <Home className="w-5 h-5" />
+                            <span className="text-xs font-medium">Home</span>
                           </div>
-                          <div>
-                            <p className="font-semibold text-deep-black">Mood Tracking</p>
-                            <p className="text-sm text-slate-gray">7-day streak!</p>
+                          <div className="flex flex-col items-center space-y-1 text-slate-gray">
+                            <BookOpen className="w-5 h-5" />
+                            <span className="text-xs">Journal</span>
                           </div>
-                        </div>
-
-                        <div className="premium-card p-4 flex items-center space-x-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-soft-lavender to-pale-aqua rounded-xl flex items-center justify-center">
-                            <span className="text-xl">🎯</span>
+                          <div className="flex flex-col items-center space-y-1 text-slate-gray">
+                            <Target className="w-5 h-5" />
+                            <span className="text-xs">Goals</span>
                           </div>
-                          <div>
-                            <p className="font-semibold text-deep-black">Growth Goals</p>
-                            <p className="text-sm text-slate-gray">3 active goals</p>
+                          <div className="flex flex-col items-center space-y-1 text-slate-gray">
+                            <MessageCircle className="w-5 h-5" />
+                            <span className="text-xs">Community</span>
                           </div>
-                        </div>
-
-                        <div className="premium-card p-4 flex items-center space-x-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-champagne-gold to-blush-rose rounded-xl flex items-center justify-center">
-                            <span className="text-xl">💭</span>
-                          </div>
-                          <div>
-                            <p className="font-semibold text-deep-black">Daily Journal</p>
-                            <p className="text-sm text-slate-gray">Today's entry</p>
+                          <div className="flex flex-col items-center space-y-1 text-slate-gray">
+                            <User className="w-5 h-5" />
+                            <span className="text-xs">Profile</span>
                           </div>
                         </div>
                       </div>
@@ -147,6 +171,11 @@ const HeroSection = () => {
 
               {/* Soft glow effect */}
               <div className="absolute inset-0 bg-gradient-to-b from-champagne-gold/10 to-blush-rose/10 rounded-[3rem] blur-2xl -z-10"></div>
+              
+              {/* Floating elements around the phone */}
+              <div className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-r from-champagne-gold to-blush-rose rounded-full animate-gentle-bounce opacity-80"></div>
+              <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-gradient-to-r from-soft-lavender to-pale-aqua rounded-full animate-gentle-bounce opacity-80" style={{ animationDelay: '1s' }}></div>
+              <div className="absolute top-1/3 -left-6 w-4 h-4 bg-gradient-to-r from-pale-aqua to-champagne-gold rounded-full animate-gentle-bounce opacity-60" style={{ animationDelay: '2s' }}></div>
             </div>
           </div>
         </div>

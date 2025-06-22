@@ -336,3 +336,21 @@
     opacity: 1 !important;
   }
 }
+
+/* Feature section specific animations */
+@keyframes drawPath {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.feature-card {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.feature-card.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
