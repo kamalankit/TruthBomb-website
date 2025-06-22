@@ -1,128 +1,86 @@
-
 import React, { useState } from 'react';
+import { Home, BookOpen, Target, MessageCircle, User, Sparkles } from 'lucide-react';
 
 const screens = [
   {
     id: 'home',
-    title: 'Home Dashboard',
+    title: 'Home',
     description: 'Your daily sanctuary for growth and reflection with personalized truths',
+    icon: Home,
+    showInNav: true,
     content: (
-      <div className="h-full bg-gradient-to-br from-soft-lavender/20 to-soft-white p-6 flex flex-col">
-        <div className="text-center mb-8">
+      <div className="h-full bg-gradient-to-br from-purple-50 to-blue-50 flex flex-col">
+        <div className="text-center mb-6 px-4 pt-4">
           <div className="text-2xl mb-2">🌅</div>
-          <h3 className="font-semibold text-deep-black">Good Morning!</h3>
-          <p className="text-sm text-slate-gray">Ready for today's growth?</p>
+          <h3 className="font-semibold text-gray-900">Good Morning!</h3>
+          <p className="text-sm text-gray-600">Ready for today's growth?</p>
         </div>
         
-        <div className="premium-card p-6 mb-6">
-          <h4 className="font-medium text-deep-black mb-3">Today's Truth</h4>
-          <p className="text-slate-gray text-sm leading-relaxed italic">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4 mb-4 mx-4">
+          <h4 className="font-medium text-gray-900 mb-2 text-sm">Today's Truth</h4>
+          <p className="text-gray-600 text-xs leading-relaxed italic mb-2">
             "The best time to plant a tree was 20 years ago. The second best time is now."
           </p>
-          <p className="text-xs text-champagne-gold mt-2 font-medium">— Chinese Proverb</p>
+          <p className="text-xs text-yellow-600 font-medium">— Chinese Proverb</p>
         </div>
         
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-cta-gradient text-white p-4 rounded-xl text-center gentle-shadow">
+        <div className="grid grid-cols-2 gap-3 mb-4 px-4">
+          <div className="bg-gradient-to-r from-yellow-600 to-rose-400 text-white p-3 rounded-xl text-center">
             <div className="text-lg font-semibold">7</div>
             <div className="text-xs opacity-90">Day Streak</div>
           </div>
-          <div className="bg-gradient-to-r from-champagne-gold to-blush-rose text-white p-4 rounded-xl text-center gentle-shadow">
+          <div className="bg-gradient-to-r from-purple-400 to-blue-400 text-white p-3 rounded-xl text-center">
             <div className="text-lg font-semibold">3</div>
             <div className="text-xs opacity-90">Active Goals</div>
           </div>
         </div>
 
-        <div className="premium-card p-3">
-          <p className="text-xs text-slate-gray mb-2">Today's Intention</p>
-          <p className="text-sm text-deep-black italic">"Focus on progress, not perfection"</p>
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-3 mx-4">
+          <p className="text-xs text-gray-600 mb-1">Today's Intention</p>
+          <p className="text-sm text-gray-900 italic">"Focus on progress, not perfection"</p>
         </div>
       </div>
     )
   },
   {
-    id: 'mood',
-    title: 'Self-Reflection Hub',
-    description: 'Track emotions, build intelligence, and discover patterns with AI insights',
+    id: 'journal',
+    title: 'Journal',
+    description: 'Guided prompts, pattern recognition, and personalized insights',
+    icon: BookOpen,
+    showInNav: true,
     content: (
-      <div className="h-full bg-gradient-to-br from-pale-aqua/20 to-soft-white p-6 flex flex-col justify-center">
-        <div className="text-center mb-8">
-          <h3 className="font-semibold text-deep-black mb-2">How are you feeling?</h3>
-          <p className="text-sm text-slate-gray">Tap to track your mood</p>
+      <div className="h-full bg-gradient-to-br from-purple-50 to-indigo-50 flex flex-col px-4 pt-4">
+        <div className="text-center mb-6">
+          <h3 className="font-semibold text-gray-900 mb-1">Evening Reflection</h3>
+          <p className="text-xs text-gray-600">Today's guided prompt</p>
         </div>
         
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          {['😊', '😌', '😔', '😤', '🤔', '😴'].map((emoji, i) => (
-            <button key={i} className="text-3xl p-4 rounded-xl premium-card hover:scale-105 transition-transform">
-              {emoji}
-            </button>
-          ))}
-        </div>
-        
-        <div className="premium-card p-4 mb-4">
-          <p className="text-xs text-slate-gray mb-2">Weekly Pattern</p>
-          <div className="flex space-x-2">
-            {[3, 5, 4, 5, 3, 4, 5].map((level, i) => (
-              <div key={i} className={`w-6 h-${level * 2} bg-gradient-to-t from-champagne-gold to-blush-rose rounded-sm`}></div>
-            ))}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4 mb-4">
+          <p className="text-sm text-gray-900 font-medium mb-3">
+            "What moment today made you feel most proud of yourself?"
+          </p>
+          <div className="bg-gray-50 rounded-xl p-3">
+            <p className="text-xs text-gray-700">
+              Finally stood up for myself in that meeting. It felt scary but empowering.
+            </p>
           </div>
         </div>
 
-        <div className="premium-card p-4">
-          <textarea 
-            placeholder="Quick reflection... (optional)"
-            className="w-full h-16 resize-none border-0 outline-none text-sm text-slate-gray bg-transparent"
-          />
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4 mb-4">
+          <h4 className="text-sm font-medium text-gray-900 mb-2">AI Insight</h4>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            "You've mentioned 'confidence' in 4 entries this week. Your self-advocacy skills are growing! 🌱"
+          </p>
         </div>
-      </div>
-    )
-  },
-  {
-    id: 'community',
-    title: 'SparkFeed Community',
-    description: 'Anonymous wisdom sharing, peer support, and authentic connections',
-    content: (
-      <div className="h-full bg-gradient-to-br from-blush-rose/20 to-soft-white p-6">
-        <div className="text-center mb-6">
-          <h3 className="font-semibold text-deep-black mb-1">SparkFeed</h3>
-          <p className="text-xs text-slate-gray">Anonymous insights from others</p>
-        </div>
-        
-        <div className="space-y-4">
-          <div className="premium-card p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <span className="text-xs bg-soft-lavender px-2 py-1 rounded-full text-deep-black">#Growth</span>
-              <span className="text-xs text-slate-gray">😊</span>
-            </div>
-            <p className="text-sm text-deep-black mb-2">"Started meditation today. Small steps count!"</p>
-            <div className="flex justify-between text-xs text-slate-gray">
-              <span>Anonymous • 2h ago</span>
-              <span className="text-champagne-gold">❤️ 23</span>
-            </div>
+
+        <div className="flex space-x-2">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-3 flex-1 text-center">
+            <div className="text-sm font-semibold text-gray-900">12</div>
+            <div className="text-xs text-gray-600">This month</div>
           </div>
-          
-          <div className="premium-card p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <span className="text-xs bg-pale-aqua px-2 py-1 rounded-full text-deep-black">#Truth</span>
-              <span className="text-xs text-slate-gray">😌</span>
-            </div>
-            <p className="text-sm text-deep-black mb-2">"Grateful for family time this weekend."</p>
-            <div className="flex justify-between text-xs text-slate-gray">
-              <span>Anonymous • 5h ago</span>
-              <span className="text-champagne-gold">❤️ 17</span>
-            </div>
-          </div>
-          
-          <div className="premium-card p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <span className="text-xs bg-blush-rose px-2 py-1 rounded-full text-deep-black">#Healing</span>
-              <span className="text-xs text-slate-gray">🤔</span>
-            </div>
-            <p className="text-sm text-deep-black mb-2">"Learning to be patient with myself."</p>
-            <div className="flex justify-between text-xs text-slate-gray">
-              <span>Anonymous • 1d ago</span>
-              <span className="text-champagne-gold">❤️ 41</span>
-            </div>
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-3 flex-1 text-center">
+            <div className="text-sm font-semibold text-gray-900">89</div>
+            <div className="text-xs text-gray-600">Total entries</div>
           </div>
         </div>
       </div>
@@ -130,47 +88,49 @@ const screens = [
   },
   {
     id: 'goals',
-    title: 'Goal Tracking System',
+    title: 'Goals',
     description: 'Visual progress tracking, milestone celebrations, and achievement badges',
+    icon: Target,
+    showInNav: true,
     content: (
-      <div className="h-full bg-gradient-to-br from-champagne-gold/20 to-soft-white p-6">
+      <div className="h-full bg-gradient-to-br from-emerald-50 to-teal-50 flex flex-col px-4 pt-4">
         <div className="text-center mb-6">
-          <h3 className="font-semibold text-deep-black mb-1">Your Goals</h3>
-          <p className="text-xs text-slate-gray">Track your growth journey</p>
+          <h3 className="font-semibold text-gray-900 mb-1">Your Goals</h3>
+          <p className="text-xs text-gray-600">Track your growth journey</p>
         </div>
         
-        <div className="space-y-4">
-          <div className="premium-card p-4">
+        <div className="space-y-3">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4">
             <div className="flex justify-between items-center mb-3">
-              <h4 className="font-medium text-deep-black">Daily Meditation</h4>
-              <span className="text-xs bg-champagne-gold text-white px-2 py-1 rounded-full">3 months</span>
+              <h4 className="font-medium text-gray-900 text-sm">Daily Meditation</h4>
+              <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">3 months</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-              <div className="bg-gradient-to-r from-champagne-gold to-blush-rose h-2 rounded-full" style={{width: '78%'}}></div>
+              <div className="bg-gradient-to-r from-yellow-600 to-rose-400 h-2 rounded-full" style={{width: '78%'}}></div>
             </div>
-            <p className="text-xs text-slate-gray">78% complete • 23 days streak</p>
+            <p className="text-xs text-gray-600">78% complete • 23 days streak</p>
           </div>
 
-          <div className="premium-card p-4">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4">
             <div className="flex justify-between items-center mb-3">
-              <h4 className="font-medium text-deep-black">Read 12 Books</h4>
-              <span className="text-xs bg-soft-lavender text-deep-black px-2 py-1 rounded-full">1 year</span>
+              <h4 className="font-medium text-gray-900 text-sm">Read 12 Books</h4>
+              <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">1 year</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-              <div className="bg-gradient-to-r from-soft-lavender to-pale-aqua h-2 rounded-full" style={{width: '42%'}}></div>
+              <div className="bg-gradient-to-r from-purple-400 to-blue-400 h-2 rounded-full" style={{width: '42%'}}></div>
             </div>
-            <p className="text-xs text-slate-gray">5 of 12 books • On track</p>
+            <p className="text-xs text-gray-600">5 of 12 books • On track</p>
           </div>
 
-          <div className="premium-card p-4">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4">
             <div className="flex justify-between items-center mb-3">
-              <h4 className="font-medium text-deep-black">Learn Guitar</h4>
-              <span className="text-xs bg-pale-aqua text-deep-black px-2 py-1 rounded-full">6 months</span>
+              <h4 className="font-medium text-gray-900 text-sm">Learn Guitar</h4>
+              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">6 months</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-              <div className="bg-gradient-to-r from-pale-aqua to-champagne-gold h-2 rounded-full" style={{width: '25%'}}></div>
+              <div className="bg-gradient-to-r from-blue-400 to-emerald-400 h-2 rounded-full" style={{width: '25%'}}></div>
             </div>
-            <p className="text-xs text-slate-gray">Basic chords mastered 🎯</p>
+            <p className="text-xs text-gray-600">Basic chords mastered 🎯</p>
           </div>
         </div>
 
@@ -180,48 +140,97 @@ const screens = [
             <span className="text-lg">⭐</span>
             <span className="text-lg">🎯</span>
           </div>
-          <p className="text-xs text-slate-gray mt-1">Achievement badges earned</p>
+          <p className="text-xs text-gray-600 mt-1">Achievement badges earned</p>
         </div>
       </div>
     )
   },
   {
-    id: 'journal',
-    title: 'AI-Powered Journal',
-    description: 'Guided prompts, pattern recognition, and personalized insights',
+    id: 'mood',
+    title: 'Reflection',
+    description: 'Track emotions, build intelligence, and discover patterns with AI insights',
+    icon: MessageCircle,
+    showInNav: true,
     content: (
-      <div className="h-full bg-gradient-to-br from-soft-lavender/30 to-soft-white p-6">
+      <div className="h-full bg-gradient-to-br from-rose-50 to-pink-50 flex flex-col justify-center px-4">
         <div className="text-center mb-6">
-          <h3 className="font-semibold text-deep-black mb-1">Evening Reflection</h3>
-          <p className="text-xs text-slate-gray">Today's guided prompt</p>
+          <h3 className="font-semibold text-gray-900 mb-2">How are you feeling?</h3>
+          <p className="text-sm text-gray-600">Tap to track your mood</p>
         </div>
         
-        <div className="premium-card p-4 mb-4">
-          <p className="text-sm text-deep-black font-medium mb-3">
-            "What moment today made you feel most proud of yourself?"
-          </p>
-          <textarea 
-            placeholder="Type your reflection here..."
-            className="w-full h-20 resize-none border-0 outline-none text-sm text-slate-gray bg-transparent"
-            defaultValue="Finally stood up for myself in that meeting. It felt scary but empowering."
-          />
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          {['😊', '😌', '😔', '😤', '🤔', '😴'].map((emoji, i) => (
+            <button key={i} className="text-2xl p-3 rounded-xl bg-white/80 backdrop-blur-sm shadow-sm hover:scale-105 transition-transform">
+              {emoji}
+            </button>
+          ))}
         </div>
-
-        <div className="premium-card p-4 mb-4">
-          <h4 className="text-sm font-medium text-deep-black mb-2">AI Insight</h4>
-          <p className="text-xs text-slate-gray leading-relaxed">
-            "You've mentioned 'confidence' in 4 entries this week. Your self-advocacy skills are growing! 🌱"
-          </p>
-        </div>
-
-        <div className="flex space-x-2">
-          <div className="premium-card p-3 flex-1 text-center">
-            <div className="text-sm font-semibold text-deep-black">12</div>
-            <div className="text-xs text-slate-gray">This month</div>
+        
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4 mb-4">
+          <p className="text-xs text-gray-600 mb-2">Weekly Pattern</p>
+          <div className="flex space-x-1 items-end">
+            {[3, 5, 4, 5, 3, 4, 5].map((level, i) => (
+              <div key={i} className={`w-4 bg-gradient-to-t from-yellow-600 to-rose-400 rounded-sm`} style={{height: `${level * 6}px`}}></div>
+            ))}
           </div>
-          <div className="premium-card p-3 flex-1 text-center">
-            <div className="text-sm font-semibold text-deep-black">89</div>
-            <div className="text-xs text-slate-gray">Total entries</div>
+        </div>
+
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4">
+          <div className="bg-gray-50 rounded-xl p-3">
+            <p className="text-xs text-gray-500">Quick reflection... (optional)</p>
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'community',
+    title: 'Community',
+    description: 'Anonymous wisdom sharing, peer support, and authentic connections',
+    icon: User,
+    showInNav: true,
+    content: (
+      <div className="h-full bg-gradient-to-br from-indigo-50 to-purple-50 flex flex-col px-4 pt-4">
+        <div className="text-center mb-6">
+          <h3 className="font-semibold text-gray-900 mb-1">SparkFeed</h3>
+          <p className="text-xs text-gray-600">Anonymous insights from others</p>
+        </div>
+        
+        <div className="space-y-3">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">#Growth</span>
+              <span className="text-xs text-gray-600">😊</span>
+            </div>
+            <p className="text-sm text-gray-900 mb-2">"Started meditation today. Small steps count!"</p>
+            <div className="flex justify-between text-xs text-gray-600">
+              <span>Anonymous • 2h ago</span>
+              <span className="text-red-500">❤️ 23</span>
+            </div>
+          </div>
+          
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">#Truth</span>
+              <span className="text-xs text-gray-600">😌</span>
+            </div>
+            <p className="text-sm text-gray-900 mb-2">"Grateful for family time this weekend."</p>
+            <div className="flex justify-between text-xs text-gray-600">
+              <span>Anonymous • 5h ago</span>
+              <span className="text-red-500">❤️ 17</span>
+            </div>
+          </div>
+          
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <span className="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded-full">#Healing</span>
+              <span className="text-xs text-gray-600">🤔</span>
+            </div>
+            <p className="text-sm text-gray-900 mb-2">"Learning to be patient with myself."</p>
+            <div className="flex justify-between text-xs text-gray-600">
+              <span>Anonymous • 1d ago</span>
+              <span className="text-red-500">❤️ 41</span>
+            </div>
           </div>
         </div>
       </div>
@@ -229,71 +238,67 @@ const screens = [
   },
   {
     id: 'premium',
-    title: 'Premium Features',
+    title: 'Profile',
     description: 'Advanced analytics, AI insights, unlimited tracking, and exclusive content',
+    icon: User,
+    showInNav: true,
     content: (
-      <div className="h-full bg-gradient-to-br from-champagne-gold/30 to-blush-rose/20 p-6">
+      <div className="h-full bg-gradient-to-br from-yellow-50 to-orange-50 flex flex-col px-4 pt-4">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center space-x-2 mb-2">
-            <span className="text-lg">✨</span>
-            <h3 className="font-semibold text-deep-black">Premium</h3>
+          <div className="w-20 h-20 bg-gradient-to-r from-yellow-600 to-rose-400 rounded-full mx-auto mb-3 flex items-center justify-center">
+            <span className="text-2xl text-white">👤</span>
           </div>
-          <p className="text-xs text-slate-gray">Unlock your full potential</p>
+          <h3 className="font-semibold text-gray-900 mb-1">Sarah M.</h3>
+          <p className="text-xs text-gray-600">Member since March 2025</p>
         </div>
         
         <div className="space-y-3">
-          <div className="premium-card p-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-champagne-gold to-blush-rose rounded-lg flex items-center justify-center">
-                <span className="text-sm">🧠</span>
-              </div>
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4">
+            <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-medium text-deep-black text-sm">AI Growth Coach</h4>
-                <p className="text-xs text-slate-gray">Personalized insights & recommendations</p>
+                <h4 className="font-medium text-gray-900 text-sm">Streak Record</h4>
+                <p className="text-xs text-gray-600">Your longest streak</p>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-yellow-600">28</div>
+                <div className="text-xs text-gray-600">days</div>
               </div>
             </div>
           </div>
 
-          <div className="premium-card p-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-soft-lavender to-pale-aqua rounded-lg flex items-center justify-center">
-                <span className="text-sm">📊</span>
-              </div>
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4">
+            <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-medium text-deep-black text-sm">Advanced Analytics</h4>
-                <p className="text-xs text-slate-gray">Deep pattern analysis & trends</p>
+                <h4 className="font-medium text-gray-900 text-sm">Goals Completed</h4>
+                <p className="text-xs text-gray-600">Total achievements</p>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-purple-600">12</div>
+                <div className="text-xs text-gray-600">goals</div>
               </div>
             </div>
           </div>
 
-          <div className="premium-card p-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-pale-aqua to-champagne-gold rounded-lg flex items-center justify-center">
-                <span className="text-sm">🎯</span>
-              </div>
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm p-4">
+            <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-medium text-deep-black text-sm">Unlimited Goals</h4>
-                <p className="text-xs text-slate-gray">Track as many dreams as you want</p>
+                <h4 className="font-medium text-gray-900 text-sm">Journal Entries</h4>
+                <p className="text-xs text-gray-600">Thoughts captured</p>
               </div>
-            </div>
-          </div>
-
-          <div className="premium-card p-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-blush-rose to-soft-lavender rounded-lg flex items-center justify-center">
-                <span className="text-sm">👑</span>
-              </div>
-              <div>
-                <h4 className="font-medium text-deep-black text-sm">Exclusive Content</h4>
-                <p className="text-xs text-slate-gray">Expert truths & early access</p>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-blue-600">89</div>
+                <div className="text-xs text-gray-600">entries</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-4 text-center">
-          <button className="cta-button text-sm px-6 py-2 w-full">
-            Upgrade Now - $4.99/month
+        <div className="mt-6 text-center">
+          <button className="bg-gradient-to-r from-yellow-600 to-rose-400 text-white text-sm px-6 py-2 rounded-2xl font-semibold w-full mb-3">
+            Upgrade to Premium
+          </button>
+          <button className="text-gray-600 text-sm underline">
+            Settings & Privacy
           </button>
         </div>
       </div>
@@ -301,74 +306,189 @@ const screens = [
   }
 ];
 
-const InterfaceShowcase: React.FC = () => {
+const InterfaceShowcase = () => {
   const [activeScreen, setActiveScreen] = useState(0);
 
+  const leftScreens = screens.slice(0, 3);
+  const rightScreens = screens.slice(3, 6);
+  const navScreens = screens.filter(screen => screen.showInNav);
+
   return (
-    <section id="showcase" className="section-padding bg-gradient-to-br from-pale-aqua/30 to-soft-lavender/30">
-      <div className="container-width">
-        <div className="text-center mb-16 animate-on-scroll">
-          <h2 className="text-4xl lg:text-6xl font-bold text-deep-black mb-6 leading-tight">
+    <section id="interface-showcase" className="py-20 bg-gradient-to-br from-slate-50 to-gray-100 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-200 rounded-full filter blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-200 rounded-full filter blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
             Experience thoughtful
-            <span className="gradient-text block">design.</span>
+            <span className="block bg-gradient-to-r from-yellow-600 to-rose-400 bg-clip-text text-transparent">design.</span>
           </h2>
-          <p className="text-xl text-slate-gray max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Every feature crafted for Gen Z wellness, mindful growth, and authentic community connection
           </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row items-center gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Left Features */}
+          <div className="lg:col-span-3 space-y-4">
+            {leftScreens.map((screen, index) => {
+              const IconComponent = screen.icon;
+              return (
+                <button
+                  key={screen.id}
+                  onClick={() => setActiveScreen(index)}
+                  className={`w-full text-left p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-[1.02] ${
+                    activeScreen === index
+                      ? 'border-yellow-600/50 bg-gradient-to-r from-yellow-600/10 to-rose-400/10 shadow-lg'
+                      : 'border-gray-200 bg-white/80 hover:border-yellow-600/30'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className={`p-2 rounded-lg ${
+                      activeScreen === index
+                        ? 'bg-gradient-to-r from-yellow-600 to-rose-400 text-white'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      <IconComponent className="w-5 h-5" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900">{screen.title}</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3">{screen.description}</p>
+                  <div className={`w-8 h-1 rounded-full transition-all duration-300 ${
+                    activeScreen === index ? 'bg-gradient-to-r from-yellow-600 to-rose-400' : 'bg-gray-300'
+                  }`} />
+                </button>
+              );
+            })}
+          </div>
+
           {/* Phone Mockup */}
-          <div className="flex-1 flex justify-center animate-on-scroll">
+          <div className="lg:col-span-6 flex justify-center">
             <div className="relative">
-              <div className="w-80 h-[650px] bg-gradient-to-b from-gray-800 to-gray-900 rounded-[3rem] p-3 gentle-shadow">
-                <div className="w-full h-full bg-soft-white rounded-[2.5rem] overflow-hidden relative">
+              <div className="w-80 h-[650px] bg-gradient-to-b from-gray-800 to-gray-900 rounded-[3rem] p-2 shadow-2xl">
+                <div className="h-full bg-gradient-to-br from-slate-50 to-gray-100 rounded-[2.5rem] overflow-hidden relative flex flex-col">
+                  {/* iPhone Notch */}
+                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-gray-900 rounded-b-2xl z-10"></div>
+                  
                   {/* Status Bar */}
-                  <div className="flex justify-between items-center px-6 pt-4 pb-2 text-xs text-slate-gray">
+                  <div className="flex justify-between items-center px-6 pt-8 pb-2 text-xs text-gray-900 font-medium flex-shrink-0">
                     <span className="font-semibold">9:41</span>
-                    <div className="flex space-x-1">
-                      <div className="w-4 h-2 bg-champagne-gold rounded-sm"></div>
-                      <div className="w-4 h-2 bg-champagne-gold rounded-sm opacity-70"></div>
-                      <div className="w-4 h-2 bg-gray-300 rounded-sm"></div>
+                    <div className="flex items-center space-x-1">
+                      <div className="flex space-x-0.5">
+                        <div className="w-1 h-1 bg-gray-900 rounded-full"></div>
+                        <div className="w-1 h-1 bg-gray-900 rounded-full"></div>
+                        <div className="w-1 h-1 bg-gray-900 rounded-full"></div>
+                        <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                      </div>
+                      <svg className="w-6 h-3 ml-1" viewBox="0 0 24 12" fill="none">
+                        <rect x="1" y="3" width="18" height="6" rx="2" stroke="currentColor" strokeWidth="1" fill="none"/>
+                        <rect x="19" y="5" width="2" height="2" rx="0.5" fill="currentColor"/>
+                        <rect x="3" y="4" width="14" height="4" rx="1" fill="#22c55e"/>
+                      </svg>
                     </div>
                   </div>
-                  
-                  {screens[activeScreen].content}
+
+                  {/* Screen Content */}
+                  <div className="flex-1 overflow-hidden pb-20">
+                    {screens[activeScreen].content}
+                  </div>
+
+                  {/* Bottom Navigation - Clean 4-tab design */}
+                  <div className="flex-shrink-0">
+                    <div className="bg-white/95 backdrop-blur-lg border-t border-gray-200/50">
+                      <div className="flex">
+                        {navScreens.map((screen) => {
+                          const screenIndex = screens.findIndex(s => s.id === screen.id);
+                          const IconComponent = screen.icon;
+                          const isActive = activeScreen === screenIndex;
+                          
+                          return (
+                            <button
+                              key={screen.id}
+                              onClick={() => setActiveScreen(screenIndex)}
+                              className="flex-1 flex flex-col items-center justify-center py-3 px-2"
+                            >
+                              <div className={`p-1.5 rounded-lg transition-all duration-200 ${
+                                isActive 
+                                  ? 'bg-gradient-to-r from-yellow-600 to-rose-400' 
+                                  : 'bg-transparent'
+                              }`}>
+                                <IconComponent 
+                                  className={`w-5 h-5 transition-colors duration-200 ${
+                                    isActive 
+                                      ? 'text-white' 
+                                      : 'text-gray-500'
+                                  }`} 
+                                  strokeWidth={2}
+                                />
+                              </div>
+                              <span className={`text-xs mt-1 font-medium transition-colors duration-200 ${
+                                isActive 
+                                  ? 'text-gray-900' 
+                                  : 'text-gray-500'
+                              }`}>
+                                {screen.title}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    
+                    {/* iPhone Home Indicator */}
+                    <div className="flex justify-center py-2 bg-white/95">
+                      <div className="w-32 h-1 bg-gray-900 rounded-full opacity-40"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              
+
               {/* Soft glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-b from-champagne-gold/10 to-blush-rose/10 rounded-[3rem] blur-2xl -z-10"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-yellow-400/20 to-rose-400/20 rounded-[3rem] blur-2xl -z-10"></div>
+              
+              {/* Floating elements around the phone */}
+              <div className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-r from-yellow-400 to-rose-400 rounded-full animate-bounce opacity-80"></div>
+              <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full animate-bounce opacity-80" style={{ animationDelay: '1s' }}></div>
+              <div className="absolute top-1/3 -left-6 w-4 h-4 bg-gradient-to-r from-blue-400 to-yellow-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '2s' }}></div>
             </div>
           </div>
 
-          {/* Screen Navigation */}
-          <div className="flex-1 space-y-6 animate-on-scroll">
-            {screens.map((screen, index) => (
-              <button
-                key={screen.id}
-                onClick={() => setActiveScreen(index)}
-                className={`w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 hover:scale-[1.02] ${
-                  activeScreen === index
-                    ? 'border-champagne-gold/50 bg-gradient-to-r from-champagne-gold/10 to-blush-rose/10'
-                    : 'border-gray-200 bg-white/80 hover:border-champagne-gold/30'
-                }`}
-              >
-                <h3 className={`font-semibold mb-2 text-lg ${
-                  activeScreen === index ? 'text-deep-black' : 'text-deep-black'
-                }`}>
-                  {screen.title}
-                </h3>
-                <p className={`text-sm mb-4 ${
-                  activeScreen === index ? 'text-slate-gray' : 'text-slate-gray'
-                }`}>
-                  {screen.description}
-                </p>
-                <div className={`w-12 h-1 rounded-full transition-all duration-300 ${
-                  activeScreen === index ? 'bg-gradient-to-r from-champagne-gold to-blush-rose' : 'bg-gray-300'
-                }`} />
-              </button>
-            ))}
+          {/* Right Features */}
+          <div className="lg:col-span-3 space-y-4">
+            {rightScreens.map((screen, index) => {
+              const actualIndex = index + 3;
+              const IconComponent = screen.icon;
+              return (
+                <button
+                  key={screen.id}
+                  onClick={() => setActiveScreen(actualIndex)}
+                  className={`w-full text-left p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-[1.02] ${
+                    activeScreen === actualIndex
+                      ? 'border-yellow-600/50 bg-gradient-to-r from-yellow-600/10 to-rose-400/10 shadow-lg'
+                      : 'border-gray-200 bg-white/80 hover:border-yellow-600/30'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className={`p-2 rounded-lg ${
+                      activeScreen === actualIndex
+                        ? 'bg-gradient-to-r from-yellow-600 to-rose-400 text-white'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      <IconComponent className="w-5 h-5" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900">{screen.title}</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3">{screen.description}</p>
+                  <div className={`w-8 h-1 rounded-full transition-all duration-300 ${
+                    activeScreen === actualIndex ? 'bg-gradient-to-r from-yellow-600 to-rose-400' : 'bg-gray-300'
+                  }`} />
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

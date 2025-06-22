@@ -13,7 +13,7 @@ const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ 
@@ -52,28 +52,28 @@ const Navigation = () => {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             <button 
+              onClick={() => scrollToSection('philosophy')}
+              className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
+            >
+              Philosophy
+            </button>
+            <button 
               onClick={() => scrollToSection('features')}
               className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
             >
               Features
             </button>
             <button 
-              onClick={() => scrollToSection('showcase')}
+              onClick={() => scrollToSection('interface-showcase')}
               className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
             >
               App Preview
             </button>
             <button 
-              onClick={() => scrollToSection('philosophy')}
+              onClick={() => scrollToSection('community')}
               className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
             >
-              About
-            </button>
-            <button 
-              onClick={() => scrollToSection('testimonials')}
-              className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
-            >
-              Stories
+              Community
             </button>
             <button 
               onClick={() => scrollToSection('pricing')}
@@ -104,28 +104,28 @@ const Navigation = () => {
           <div className="md:hidden absolute top-16 left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-lg">
             <div className="px-4 py-6 space-y-4">
               <button 
+                onClick={() => scrollToSection('philosophy')}
+                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
+              >
+                Philosophy
+              </button>
+              <button 
                 onClick={() => scrollToSection('features')}
                 className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
               >
                 Features
               </button>
               <button 
-                onClick={() => scrollToSection('showcase')}
+                onClick={() => scrollToSection('interface-showcase')}
                 className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
               >
                 App Preview
               </button>
               <button 
-                onClick={() => scrollToSection('philosophy')}
+                onClick={() => scrollToSection('community')}
                 className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
               >
-                About
-              </button>
-              <button 
-                onClick={() => scrollToSection('testimonials')}
-                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
-              >
-                Stories
+                Community
               </button>
               <button 
                 onClick={() => scrollToSection('pricing')}

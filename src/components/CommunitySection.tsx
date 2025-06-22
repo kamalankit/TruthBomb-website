@@ -69,7 +69,7 @@ const CommunitySection = () => {
   };
 
   return (
-    <section id="testimonials" className="section-padding bg-gradient-to-br from-pale-aqua/30 to-soft-lavender/30 overflow-hidden">
+    <section id="community" className="section-padding bg-gradient-to-br from-pale-aqua/30 to-soft-lavender/30 overflow-hidden">
       <div className="container-width">
         {/* Section Header */}
         <div className="text-center mb-20 animate-fade-in">
