@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Navigation from '../components/Navigation';
 import HeroSection from '../components/HeroSection';
 import PhilosophySection from '../components/PhilosophySection';
@@ -9,196 +11,274 @@ import PricingSection from '../components/PricingSection';
 import FinalCTASection from '../components/FinalCTASection';
 import FloatingQRWidget from '../components/FloatingQRWidget';
 import SoloLevelingNotification from '../components/SoloLevelingNotification';
+import useSmoothScroll from '../hooks/useSmoothScroll';
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger);
 
 const Index = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { lenis } = useSmoothScroll({
+    duration: 1.2,
+    easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smooth: true,
+    smoothTouch: false, // Better mobile performance
+  });
+
   useEffect(() => {
-    let scrollTimeout: NodeJS.Timeout;
-    let isScrolling = false;
-
-    // Apple-style scrollbar visibility
-    const showScrollbar = () => {
-      document.body.classList.add('scrolling');
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        document.body.classList.remove('scrolling');
-      }, 1000);
-    };
-
-    // Enhanced smooth scroll function
-    const smoothScrollTo = (targetY: number, duration: number = 800) => {
-      const startY = window.pageYOffset;
-      const distance = targetY - startY;
-      let startTime: number | null = null;
-
-      // Add smooth scrolling class to hide scrollbar
-      document.body.classList.add('smooth-scrolling');
-
-      const animation = (currentTime: number) => {
-        if (startTime === null) startTime = currentTime;
-        const timeElapsed = currentTime - startTime;
-        const progress = Math.min(timeElapsed / duration, 1);
-        
-        // Apple-style easing function
-        const ease = progress < 0.5 
-          ? 4 * progress * progress * progress 
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-        
-        window.scrollTo(0, startY + distance * ease);
-        
-        if (timeElapsed < duration) {
-          requestAnimationFrame(animation);
-        } else {
-          document.body.classList.remove('smooth-scrolling');
-        }
-      };
-
-      requestAnimationFrame(animation);
-    };
-
-    // Enhanced scroll observer
-    const observerOptions = {
-      threshold: [0, 0.1, 0.3, 0.5, 0.7, 1],
-      rootMargin: '-10% 0px -10% 0px'
-    };
-
-    const scrollObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        const target = entry.target as HTMLElement;
-        const ratio = entry.intersectionRatio;
-        
-        if (entry.isIntersecting && ratio > 0.1) {
-          target.classList.add('in-view');
-          
-          // Stagger child animations with reduced delay
-          const children = target.querySelectorAll('.stagger-item');
-          children.forEach((child, index) => {
-            setTimeout(() => {
-              (child as HTMLElement).style.opacity = '1';
-              (child as HTMLElement).style.transform = 'translateY(0)';
-            }, index * 60);
-          });
-        }
-      });
-    }, observerOptions);
-
-    // Optimized scroll handler
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          showScrollbar();
-          
-          const scrolled = window.pageYOffset;
-          const viewHeight = window.innerHeight;
-
-          // Reduced parallax effects for smoother performance
-          const parallaxElements = document.querySelectorAll('.parallax-bg');
-          parallaxElements.forEach((element, index) => {
-            const speed = 0.3 + (index * 0.05);
-            const yPos = -(scrolled * speed);
-            (element as HTMLElement).style.transform = `translate3d(0, ${yPos}px, 0)`;
-          });
-
-          // Subtle floating animations
-          const floatingElements = document.querySelectorAll('.floating-bg');
-          floatingElements.forEach((element, index) => {
-            const speed = 0.01 + (index * 0.005);
-            const yPos = Math.sin(scrolled * 0.0005 + index) * 10;
-            (element as HTMLElement).style.transform = 
-              `translate3d(0, ${scrolled * speed + yPos}px, 0)`;
-          });
-
-          // Progressive reveal animations
-          const revealElements = document.querySelectorAll('.reveal-on-scroll');
-          revealElements.forEach((element) => {
-            const rect = element.getBoundingClientRect();
-            const elementTop = rect.top;
-            
-            if (elementTop < viewHeight * 0.85) {
-              (element as HTMLElement).classList.add('revealed');
+    // Enhanced scroll-triggered animations
+    const initScrollAnimations = () => {
+      // Fade in animations
+      gsap.utils.toArray('.scroll-fade-in').forEach((element: any) => {
+        gsap.fromTo(element, 
+          { 
+            opacity: 0, 
+            y: 60,
+            scale: 0.95
+          },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: element,
+              start: "top 85%",
+              end: "bottom 15%",
+              toggleActions: "play none none reverse"
             }
-          });
+          }
+        );
+      });
 
-          ticking = false;
+      // Scale in animations
+      gsap.utils.toArray('.scroll-scale-in').forEach((element: any) => {
+        gsap.fromTo(element,
+          {
+            opacity: 0,
+            scale: 0.8,
+            rotation: -5
+          },
+          {
+            opacity: 1,
+            scale: 1,
+            rotation: 0,
+            duration: 1.2,
+            ease: "back.out(1.7)",
+            scrollTrigger: {
+              trigger: element,
+              start: "top 80%",
+              end: "bottom 20%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      });
+
+      // Slide animations
+      gsap.utils.toArray('.scroll-slide-left').forEach((element: any) => {
+        gsap.fromTo(element,
+          {
+            opacity: 0,
+            x: -100
+          },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: element,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      });
+
+      gsap.utils.toArray('.scroll-slide-right').forEach((element: any) => {
+        gsap.fromTo(element,
+          {
+            opacity: 0,
+            x: 100
+          },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: element,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      });
+
+      // Staggered children animations
+      gsap.utils.toArray('.stagger-children').forEach((container: any) => {
+        const children = container.children;
+        gsap.fromTo(children,
+          {
+            opacity: 0,
+            y: 50
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: container,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      });
+
+      // Parallax effects for backgrounds
+      gsap.utils.toArray('.parallax-slow').forEach((element: any) => {
+        gsap.to(element, {
+          yPercent: -30,
+          ease: "none",
+          scrollTrigger: {
+            trigger: element,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
         });
-        ticking = true;
+      });
+
+      gsap.utils.toArray('.parallax-medium').forEach((element: any) => {
+        gsap.to(element, {
+          yPercent: -50,
+          ease: "none",
+          scrollTrigger: {
+            trigger: element,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
+        });
+      });
+
+      gsap.utils.toArray('.parallax-fast').forEach((element: any) => {
+        gsap.to(element, {
+          yPercent: -80,
+          ease: "none",
+          scrollTrigger: {
+            trigger: element,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
+        });
+      });
+
+      // Pin sections on desktop
+      if (window.innerWidth > 1024) {
+        const pinSections = gsap.utils.toArray('.pin-section');
+        pinSections.forEach((section: any) => {
+          ScrollTrigger.create({
+            trigger: section,
+            start: "top top",
+            end: "bottom top",
+            pin: true,
+            pinSpacing: false
+          });
+        });
       }
     };
 
-    // Smooth navigation for anchor links
-    const handleAnchorClick = (e: Event) => {
-      const target = e.target as HTMLAnchorElement;
-      if (target.tagName === 'A' && target.getAttribute('href')?.startsWith('#')) {
-        e.preventDefault();
-        const targetId = target.getAttribute('href')?.substring(1);
-        const targetElement = document.getElementById(targetId || '');
+    // Initialize animations after a short delay
+    const timer = setTimeout(initScrollAnimations, 100);
+
+    // Mobile scroll snap setup
+    const setupMobileScrollSnap = () => {
+      if (window.innerWidth <= 1024 && containerRef.current) {
+        containerRef.current.classList.add('mobile-scroll-container');
         
-        if (targetElement) {
-          const targetY = targetElement.offsetTop - 80; // Account for fixed nav
-          smoothScrollTo(targetY, 1000);
-        }
+        const sections = containerRef.current.querySelectorAll('section');
+        sections.forEach(section => {
+          section.classList.add('mobile-scroll-section');
+        });
       }
     };
 
-    // Initialize observers and event listeners
-    const animatedElements = document.querySelectorAll('.animate-on-scroll, .fade-in-up, .scale-in');
-    animatedElements.forEach((el) => scrollObserver.observe(el));
+    setupMobileScrollSnap();
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    document.addEventListener('click', handleAnchorClick);
+    // Handle resize
+    const handleResize = () => {
+      ScrollTrigger.refresh();
+      setupMobileScrollSnap();
+    };
 
-    // Add scroll snap to sections
-    const sections = document.querySelectorAll('section');
-    sections.forEach(section => {
-      section.classList.add('scroll-snap-section');
-    });
+    window.addEventListener('resize', handleResize, { passive: true });
 
     // Cleanup
     return () => {
-      scrollObserver.disconnect();
-      window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('click', handleAnchorClick);
-      clearTimeout(scrollTimeout);
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, []);
 
+  // Update ScrollTrigger when Lenis is ready
+  useEffect(() => {
+    if (lenis) {
+      lenis.on('scroll', ScrollTrigger.update);
+      
+      return () => {
+        lenis.off('scroll', ScrollTrigger.update);
+      };
+    }
+  }, [lenis]);
+
   return (
-    <div className="min-h-screen bg-soft-white text-deep-black overflow-x-hidden">
+    <div 
+      ref={containerRef}
+      className="min-h-screen bg-soft-white text-deep-black overflow-x-hidden"
+    >
       {/* Navigation */}
       <Navigation />
 
       {/* Hero Section */}
-      <section id="home" className="scroll-snap-section">
+      <section id="home" className="scroll-fade-in">
         <HeroSection />
       </section>
 
       {/* Philosophy Section */}
-      <section id="philosophy" className="scroll-snap-section">
+      <section id="philosophy" className="scroll-scale-in">
         <PhilosophySection />
       </section>
 
       {/* Features Section */}
-      <section id="features" className="scroll-snap-section">
+      <section id="features" className="scroll-slide-left">
         <FeaturesSection />
       </section>
 
       {/* Interface Showcase */}
-      <section id="interface-showcase" className="scroll-snap-section">
+      <section id="interface-showcase" className="scroll-slide-right">
         <InterfaceShowcase />
       </section>
 
       {/* Community Section */}
-      <section id="community" className="scroll-snap-section">
+      <section id="community" className="scroll-fade-in">
         <CommunitySection />
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="scroll-snap-section">
+      <section id="pricing" className="scroll-scale-in stagger-children">
         <PricingSection />
       </section>
 
       {/* Final CTA Section */}
-      <section id="cta" className="scroll-snap-section">
+      <section id="cta" className="scroll-fade-in">
         <FinalCTASection />
       </section>
 
@@ -209,22 +289,22 @@ const Index = () => {
       <FloatingQRWidget />
 
       {/* Footer */}
-      <footer className="bg-warm-gray py-8 animate-on-scroll">
+      <footer className="bg-warm-gray mobile-section scroll-fade-in">
         <div className="container-width">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-4 md:mb-0">
-              <span className="text-lg font-semibold text-deep-black">Truth Bomb</span>
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div>
+              <span className="text-lg lg:text-xl font-bold text-deep-black">Truth Bomb</span>
             </div>
             
-            <div className="flex space-x-6 text-slate-gray text-sm">
-              <a href="#" className="hover:text-deep-black transition-colors">Privacy</a>
-              <a href="#" className="hover:text-deep-black transition-colors">Terms</a>
-              <a href="#" className="hover:text-deep-black transition-colors">Support</a>
+            <div className="flex flex-wrap justify-center space-x-6 text-slate-gray text-sm lg:text-base">
+              <a href="#" className="hover:text-deep-black transition-colors focus-ring">Privacy</a>
+              <a href="#" className="hover:text-deep-black transition-colors focus-ring">Terms</a>
+              <a href="#" className="hover:text-deep-black transition-colors focus-ring">Support</a>
             </div>
           </div>
           
           <div className="text-center mt-6 pt-6 border-t border-gray-200">
-            <p className="text-slate-gray text-sm">
+            <p className="text-slate-gray text-sm lg:text-base">
               © 2024 Truth Bomb. Designed with love for mindful growth.
             </p>
           </div>
