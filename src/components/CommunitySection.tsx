@@ -1,7 +1,8 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const CommunitySection = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
   const testimonials = [
     {
       quote: "Truth Bomb completely shifted my perspective on daily growth. The 5-minute ritual has become the most important part of my day.",
@@ -23,11 +24,52 @@ const CommunitySection = () => {
       age: 21,
       city: "Delhi",
       avatar: "👩🏻"
+    },
+    {
+      quote: "The AI insights are incredible. It's like having a personal growth coach that actually understands my journey.",
+      author: "Rohan",
+      age: 26,
+      city: "Pune",
+      avatar: "👨🏻"
+    },
+    {
+      quote: "I love how the app makes mindfulness feel modern and accessible. It's not preachy, just genuinely helpful.",
+      author: "Ananya",
+      age: 23,
+      city: "Chennai",
+      avatar: "👩🏽"
+    },
+    {
+      quote: "The anonymous sharing feature is brilliant. I can be vulnerable without fear, and the support is amazing.",
+      author: "Vikram",
+      age: 25,
+      city: "Hyderabad",
+      avatar: "👨🏽"
     }
   ];
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+
   return (
-    <section id="testimonials" className="section-padding bg-gradient-to-br from-pale-aqua/30 to-soft-lavender/30">
+    <section id="testimonials" className="section-padding bg-gradient-to-br from-pale-aqua/30 to-soft-lavender/30 overflow-hidden">
       <div className="container-width">
         {/* Section Header */}
         <div className="text-center mb-20 animate-fade-in">
@@ -40,33 +82,75 @@ const CommunitySection = () => {
           </p>
         </div>
 
-        {/* Testimonials Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          {testimonials.map((testimonial, index) => (
+        {/* Testimonials Slider */}
+        <div className="relative max-w-5xl mx-auto mb-16">
+          <div className="overflow-hidden rounded-3xl">
             <div 
-              key={index} 
-              className="premium-card p-8 gentle-shadow hover:scale-105 transition-transform duration-300 animate-slide-up"
-              style={{ animationDelay: `${index * 0.2}s` }}
+              className="flex transition-transform duration-700 ease-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
-              {/* Quote */}
-              <blockquote className="text-lg italic text-deep-black mb-6 leading-relaxed">
-                "{testimonial.quote}"
-              </blockquote>
-              
-              {/* Author */}
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-champagne-gold to-blush-rose rounded-full flex items-center justify-center text-2xl">
-                  {testimonial.avatar}
+              {testimonials.map((testimonial, index) => (
+                <div 
+                  key={index} 
+                  className="w-full flex-shrink-0 px-4"
+                >
+                  <div className="premium-card p-12 text-center gentle-shadow">
+                    {/* Quote */}
+                    <blockquote className="text-2xl md:text-3xl italic text-deep-black mb-8 leading-relaxed">
+                      "{testimonial.quote}"
+                    </blockquote>
+                    
+                    {/* Author */}
+                    <div className="flex items-center justify-center space-x-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-champagne-gold to-blush-rose rounded-full flex items-center justify-center text-3xl">
+                        {testimonial.avatar}
+                      </div>
+                      <div className="text-left">
+                        <cite className="text-deep-black font-semibold not-italic text-lg">
+                          {testimonial.author}, {testimonial.age}
+                        </cite>
+                        <p className="text-slate-gray">{testimonial.city}</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <cite className="text-deep-black font-semibold not-italic">
-                    {testimonial.author}, {testimonial.age}
-                  </cite>
-                  <p className="text-slate-gray text-sm">{testimonial.city}</p>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Navigation Arrows */}
+          <button 
+            onClick={prevSlide}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all duration-300 hover:scale-110"
+          >
+            <svg className="w-6 h-6 text-deep-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          
+          <button 
+            onClick={nextSlide}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all duration-300 hover:scale-110"
+          >
+            <svg className="w-6 h-6 text-deep-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Dots Indicator */}
+          <div className="flex justify-center space-x-3 mt-8">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === currentSlide 
+                    ? 'bg-champagne-gold scale-125' 
+                    : 'bg-gray-300 hover:bg-gray-400'
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Stats */}

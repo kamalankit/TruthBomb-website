@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 
@@ -14,38 +13,79 @@ const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+    setIsMobileMenuOpen(false);
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ 
+      top: 0, 
+      behavior: 'smooth' 
+    });
+  };
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
       isScrolled 
-        ? 'bg-white/90 backdrop-blur-xl border-b border-gray-100' 
+        ? 'bg-white/90 backdrop-blur-xl border-b border-gray-100 shadow-sm' 
         : 'bg-transparent'
     }`}>
       <div className="container-width">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <span className="text-2xl font-bold text-deep-black">Truth Bomb</span>
+            <button 
+              onClick={scrollToTop}
+              className="text-xl font-bold text-deep-black hover:text-champagne-gold transition-colors duration-300"
+            >
+              Truth Bomb
+            </button>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-10">
-            <a href="#features" className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-lg">
+          <div className="hidden md:flex items-center space-x-8">
+            <button 
+              onClick={() => scrollToSection('features')}
+              className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
+            >
               Features
-            </a>
-            <a href="#philosophy" className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-lg">
+            </button>
+            <button 
+              onClick={() => scrollToSection('showcase')}
+              className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
+            >
+              App Preview
+            </button>
+            <button 
+              onClick={() => scrollToSection('philosophy')}
+              className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
+            >
               About
-            </a>
-            <a href="#testimonials" className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-lg">
+            </button>
+            <button 
+              onClick={() => scrollToSection('testimonials')}
+              className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
+            >
               Stories
-            </a>
-            <a href="#pricing" className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-lg">
+            </button>
+            <button 
+              onClick={() => scrollToSection('pricing')}
+              className="text-slate-gray hover:text-deep-black transition-colors duration-300 font-medium text-sm"
+            >
               Pricing
-            </a>
+            </button>
           </div>
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <button className="cta-button mt-2">
+            <button className="bg-cta-gradient text-white font-medium text-sm px-6 py-2.5 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-blush-rose/20">
               Download Now
             </button>
           </div>
@@ -55,19 +95,47 @@ const Navigation = () => {
             className="md:hidden text-deep-black p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-20 left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-gray-100">
+          <div className="md:hidden absolute top-16 left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-lg">
             <div className="px-4 py-6 space-y-4">
-              <a href="#features" className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-lg">Features</a>
-              <a href="#philosophy" className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-lg">About</a>
-              <a href="#testimonials" className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-lg">Stories</a>
-              <a href="#pricing" className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-lg">Pricing</a>
-              <button className="w-full cta-button mt-4">Download Now</button>
+              <button 
+                onClick={() => scrollToSection('features')}
+                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
+              >
+                Features
+              </button>
+              <button 
+                onClick={() => scrollToSection('showcase')}
+                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
+              >
+                App Preview
+              </button>
+              <button 
+                onClick={() => scrollToSection('philosophy')}
+                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
+              >
+                About
+              </button>
+              <button 
+                onClick={() => scrollToSection('testimonials')}
+                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
+              >
+                Stories
+              </button>
+              <button 
+                onClick={() => scrollToSection('pricing')}
+                className="block text-slate-gray hover:text-deep-black transition-colors font-medium text-sm w-full text-left"
+              >
+                Pricing
+              </button>
+              <button className="w-full bg-cta-gradient text-white font-medium text-sm px-6 py-2.5 rounded-xl transition-all duration-300 hover:scale-105 mt-4">
+                Download Now
+              </button>
             </div>
           </div>
         )}

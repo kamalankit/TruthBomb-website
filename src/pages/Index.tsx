@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import HeroSection from '../components/HeroSection';
@@ -13,81 +12,218 @@ import SoloLevelingNotification from '../components/SoloLevelingNotification';
 
 const Index = () => {
   useEffect(() => {
-    // Apple-style scroll animation system
+    // Enhanced Apple-style scroll animation system
+    let ticking = false;
+
     const observerOptions = {
       threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
-      rootMargin: '-10% 0px -10% 0px'
+      rootMargin: '-5% 0px -5% 0px'
     };
 
+    // Smooth scroll observer for fade-in animations
     const scrollObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         const target = entry.target as HTMLElement;
         const ratio = entry.intersectionRatio;
         
-        // Smooth fade-in with upward movement
-        if (entry.isIntersecting) {
-          if (target.classList.contains('animate-on-scroll')) {
-            target.style.opacity = Math.min(ratio * 2, 1).toString();
-            target.style.transform = `translateY(${Math.max(30 - (ratio * 30), 0)}px)`;
-            
-            if (ratio > 0.3) {
-              target.classList.add('in-view');
-            }
-          }
+        if (entry.isIntersecting && ratio > 0.1) {
+          target.classList.add('in-view');
           
-          // Parallax effect for backgrounds
-          if (target.classList.contains('parallax-bg')) {
-            const scrolled = window.pageYOffset;
-            const rate = scrolled * -0.1;
-            target.style.transform = `translateY(${rate}px)`;
-          }
-          
-          // Scale animation for mockups
-          if (target.classList.contains('scale-on-scroll')) {
-            const scale = 0.9 + (ratio * 0.1);
-            target.style.transform = `scale(${scale})`;
-            target.style.opacity = ratio.toString();
-          }
+          // Stagger child animations
+          const children = target.querySelectorAll('.stagger-item');
+          children.forEach((child, index) => {
+            setTimeout(() => {
+              (child as HTMLElement).style.opacity = '1';
+              (child as HTMLElement).style.transform = 'translateY(0)';
+            }, index * 100);
+          });
         }
       });
     }, observerOptions);
 
-    // Observe all animated elements
-    const animatedElements = document.querySelectorAll('.animate-on-scroll, .parallax-bg, .scale-on-scroll');
-    animatedElements.forEach((el) => scrollObserver.observe(el));
-
-    // Smooth scroll behavior
+    // Global scroll handler for parallax and smooth effects
     const handleScroll = () => {
-      const scrolled = window.pageYOffset;
-      const viewHeight = window.innerHeight;
-      
-      // Ambient background movement
-      const backgrounds = document.querySelectorAll('.floating-bg');
-      backgrounds.forEach((bg, index) => {
-        const rate = scrolled * (0.02 + index * 0.01);
-        (bg as HTMLElement).style.transform = `translateY(${rate}px) rotate(${rate * 0.1}deg)`;
-      });
-      
-      // Sticky elements parallax
-      const stickyElements = document.querySelectorAll('.sticky-parallax');
-      stickyElements.forEach((element) => {
-        const rect = element.getBoundingClientRect();
-        const rate = (viewHeight - rect.top) / viewHeight;
-        (element as HTMLElement).style.transform = `translateY(${rate * 20}px)`;
-      });
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrolled = window.pageYOffset;
+          const viewHeight = window.innerHeight;
+          const docHeight = document.documentElement.scrollHeight;
+          const scrollProgress = scrolled / (docHeight - viewHeight);
+
+          // Smooth parallax for background elements
+          const parallaxElements = document.querySelectorAll('.parallax-bg');
+          parallaxElements.forEach((element, index) => {
+            const speed = 0.5 + (index * 0.1);
+            const yPos = -(scrolled * speed);
+            (element as HTMLElement).style.transform = `translate3d(0, ${yPos}px, 0)`;
+          });
+
+          // Floating background animations
+          const floatingElements = document.querySelectorAll('.floating-bg');
+          floatingElements.forEach((element, index) => {
+            const speed = 0.02 + (index * 0.01);
+            const rotation = scrolled * speed * 0.1;
+            const yPos = Math.sin(scrolled * 0.001 + index) * 20;
+            (element as HTMLElement).style.transform = 
+              `translate3d(0, ${scrolled * speed + yPos}px, 0) rotate(${rotation}deg)`;
+          });
+
+          // Sticky parallax elements
+          const stickyElements = document.querySelectorAll('.sticky-parallax');
+          stickyElements.forEach((element) => {
+            const rect = element.getBoundingClientRect();
+            const elementTop = rect.top;
+            const elementHeight = rect.height;
+            const windowHeight = window.innerHeight;
+            
+            // Calculate if element is in viewport
+            if (elementTop < windowHeight && elementTop + elementHeight > 0) {
+              const progress = Math.max(0, Math.min(1, (windowHeight - elementTop) / (windowHeight + elementHeight)));
+              const translateY = (progress - 0.5) * 50;
+              (element as HTMLElement).style.transform = `translate3d(0, ${translateY}px, 0)`;
+            }
+          });
+
+          // Progressive reveal animations
+          const revealElements = document.querySelectorAll('.reveal-on-scroll');
+          revealElements.forEach((element) => {
+            const rect = element.getBoundingClientRect();
+            const elementTop = rect.top;
+            const elementHeight = rect.height;
+            const windowHeight = window.innerHeight;
+            
+            if (elementTop < windowHeight * 0.8) {
+              (element as HTMLElement).classList.add('revealed');
+            }
+          });
+
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
+
+    // Smooth scroll behavior for the entire page
+    const smoothScrollTo = (target: number, duration: number = 1000) => {
+      const start = window.pageYOffset;
+      const distance = target - start;
+      let startTime: number | null = null;
+
+      const animation = (currentTime: number) => {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        
+        // Easing function (ease-out cubic)
+        const ease = 1 - Math.pow(1 - progress, 3);
+        
+        window.scrollTo(0, start + distance * ease);
+        
+        if (timeElapsed < duration) {
+          requestAnimationFrame(animation);
+        }
+      };
+
+      requestAnimationFrame(animation);
+    };
+
+    // Initialize observers and event listeners
+    const animatedElements = document.querySelectorAll('.animate-on-scroll, .fade-in-up, .scale-in');
+    animatedElements.forEach((el) => scrollObserver.observe(el));
 
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    // Staggered animation delays for child elements
-    const staggerElements = document.querySelectorAll('.stagger-children > *');
-    staggerElements.forEach((child, index) => {
-      (child as HTMLElement).style.animationDelay = `${index * 150}ms`;
-    });
+    // Enhanced CSS for smooth animations
+    const style = document.createElement('style');
+    style.textContent = `
+      .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(60px);
+        transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+      
+      .animate-on-scroll.in-view {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .fade-in-up {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+      
+      .fade-in-up.in-view {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .scale-in {
+        opacity: 0;
+        transform: scale(0.9);
+        transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+      
+      .scale-in.in-view {
+        opacity: 1;
+        transform: scale(1);
+      }
+      
+      .stagger-item {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+      
+      .reveal-on-scroll {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s ease-out;
+      }
+      
+      .reveal-on-scroll.revealed {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .parallax-bg {
+        will-change: transform;
+      }
+      
+      .floating-bg {
+        will-change: transform;
+      }
+      
+      .sticky-parallax {
+        will-change: transform;
+      }
+      
+      /* Smooth scrolling for the entire page */
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* Enhanced section transitions */
+      section {
+        position: relative;
+        z-index: 1;
+      }
+      
+      /* Improved mobile performance */
+      @media (max-width: 768px) {
+        .parallax-bg,
+        .floating-bg {
+          transform: none !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
 
+    // Cleanup
     return () => {
       scrollObserver.disconnect();
       window.removeEventListener('scroll', handleScroll);
+      document.head.removeChild(style);
     };
   }, []);
 
