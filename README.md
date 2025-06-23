@@ -1,73 +1,87 @@
-# Welcome to your Lovable project
+# Truth Bomb - Mindful Growth App
 
-## Project info
+<div align="center">
+  <img src="" alt="Truth Bomb Banner" width="800"/>
+  
+  [![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?logo=vite&logoColor=white)](https://vitejs.dev/)
+  [![React](https://img.shields.io/badge/react-%2320232a.svg?logo=react&logoColor=%2361DAFB)](https://react.dev/)
+  [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+  [![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+  
+  **Your 5-minute daily ritual for self-awareness and clarity**  
+  *Ancient wisdom meets modern design*
+</div>
 
-**URL**: https://lovable.dev/projects/768ae062-7d05-4385-9c08-de504d8793ff
+## ✨ Features
 
-## How can I edit this code?
+| Feature | Description |
+|---------|-------------|
+| **Daily Truth Bombs** | Curated wisdom from Stoicism, Zen, Vedanta, and more |
+| **Mood Tracking** | Emotion logging with Recharts visualizations |
+| **SparkFeed** | Anonymous community wisdom sharing |
+| **Guided Journal** | AI-powered prompts and reflections |
+| **Progress Dashboard** | Streaks, goals, and achievement tracking |
+| **Multi-Theme** | Light/dark mode with premium themes |
 
-There are several ways of editing your application.
+## 🛠 Tech Stack
 
-**Use Lovable**
+### Core
+- **Frontend**: [Vite](https://vitejs.dev/) + [React 18](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/)
+- **UI Components**: [Radix UI](https://www.radix-ui.com/) Primitives
+- **Form Management**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+- **State Management**: [TanStack Query](https://tanstack.com/query/latest)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/768ae062-7d05-4385-9c08-de504d8793ff) and start prompting.
+### Enhancements
+- **Animations**: [GSAP](https://gsap.com/) + [Framer Motion](https://www.framer.com/motion/)
+- **Scrolling**: [Locomotive Scroll](https://locomotivemtl.github.io/locomotive-scroll/)
+- **Date Handling**: [date-fns](https://date-fns.org/)
+- **Charts**: [Recharts](https://recharts.org/)
+- **Notifications**: [Sonner](https://sonner.emilkowal.ski/)
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 Getting Started
 
-**Use your preferred IDE**
+### Prerequisites
+- Node.js v18+
+- npm v9+ or pnpm
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
+```bash
+# Clone the repository
+git clone https://github.com/your-username/truth-bomb.git
+cd truth-bomb
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Install dependencies
+npm install
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
-```
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+# Create production build
+npm run build
 
-**Use GitHub Codespaces**
+# Preview production build
+npm run preview
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
 
-This project is built with:
+🤝 Contributing
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Fork the project
+Create your feature branch (git checkout -b feature/amazing-feature)
+Commit changes (git commit -m 'Add amazing feature')
+Push to branch (git push origin feature/amazing-feature)
+Open a Pull Request
+Please follow the Conventional Commits specification.
 
-## How can I deploy this project?
+📄 License
 
-Simply open [Lovable](https://lovable.dev/projects/768ae062-7d05-4385-9c08-de504d8793ff) and click on Share -> Publish.
+Distributed under the MIT License. See LICENSE for more information.
 
-## Can I connect a custom domain to my Lovable project?
+📬 Contact
 
-Yes, you can!
+Project Maintainer - Ankit Kamal
+Website - https://truthbomb.app
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+<div align="center"> <em>"The best time to plant a tree was 20 years ago. The second best time is now."</em> — Chinese Proverb </div> ```
