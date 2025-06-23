@@ -33,52 +33,52 @@ const HeroSection = () => {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-200 rounded-full filter blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 pt-24">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 pt-16">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
-          <div className="text-center lg:text-left space-y-8">
+          <div className="text-center lg:text-left space-y-6">
             {/* Main Headlines */}
-            <div className="space-y-6">
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-gray-900 leading-tight">
+            <div className="space-y-4">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
                 Drop a Truth.
                 <span className="block bg-gradient-to-r from-yellow-600 to-rose-400 bg-clip-text text-transparent">Track Your Growth.</span>
               </h1>
               
-              <p className="text-2xl md:text-3xl text-gray-600 font-medium leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 font-medium leading-relaxed max-w-lg">
                 Your 5-minute daily ritual for self-awareness and clarity.
               </p>
               
-              <p className="text-xl text-gray-600 leading-relaxed">
+              <p className="text-base text-gray-500 leading-relaxed max-w-md">
                 Join thousands discovering mindful growth through ancient wisdom and modern design.
               </p>
             </div>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
-              <button className="bg-gradient-to-r from-yellow-600 to-rose-400 text-white text-xl px-12 py-5 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-rose-400/20 active:scale-95">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-6">
+              <button className="bg-gradient-to-r from-yellow-600 to-rose-400 text-white text-lg px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-rose-400/20 active:scale-95">
                 Download Now
               </button>
-              <button className="bg-transparent border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 font-semibold text-xl px-12 py-5 rounded-2xl flex items-center justify-center space-x-3">
-                <Play className="w-6 h-6" />
+              <button className="bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 font-medium text-lg px-8 py-3 rounded-full flex items-center justify-center space-x-2">
+                <Play className="w-4 h-4" />
                 <span>Watch Demo</span>
               </button>
             </div>
 
             {/* Social Proof - Single Line */}
-            <div className="flex flex-wrap gap-4 justify-center lg:justify-start pt-8">
-              <div className="bg-white/80 backdrop-blur-sm border border-white/20 rounded-3xl shadow-sm px-6 py-3 flex items-center">
-                <span className="text-yellow-500 text-lg">★★★★★</span>
-                <span className="ml-2 text-gray-900 font-semibold">4.8 Rating</span>
+            <div className="flex flex-wrap gap-3 justify-center lg:justify-start pt-6">
+              <div className="bg-white/60 backdrop-blur-sm border border-gray-200 rounded-full shadow-sm px-4 py-2 flex items-center">
+                <span className="text-yellow-500 text-sm">★★★★★</span>
+                <span className="ml-2 text-gray-700 font-medium text-sm">4.8 Rating</span>
               </div>
-              <div className="bg-white/80 backdrop-blur-sm border border-white/20 rounded-3xl shadow-sm px-6 py-3 flex items-center">
-                <span className="text-gray-900 font-bold text-lg">500K+</span>
-                <span className="ml-2 text-gray-600">Downloads</span>
+              <div className="bg-white/60 backdrop-blur-sm border border-gray-200 rounded-full shadow-sm px-4 py-2 flex items-center">
+                <span className="text-gray-900 font-semibold text-sm">500K+</span>
+                <span className="ml-2 text-gray-600 text-sm">Downloads</span>
               </div>
             </div>
           </div>
 
           {/* Right Content - Enhanced Mobile App Preview */}
-          <div className="flex justify-center lg:justify-end relative lg:-mt-32">
+          <div className="flex justify-center lg:justify-end relative lg:-mt-16">
             {/* Floating Mobile App Preview - Made Smaller */}
             <div 
               ref={mobileAppRef}
@@ -219,10 +219,10 @@ const HeroSection = () => {
         </div>
 
         {/* Scroll Indicator with Text Above */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-          <p className="text-sm text-gray-600 font-medium mb-3">Scroll down</p>
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+          <p className="text-xs text-gray-500 font-medium mb-2">Scroll down</p>
           <div className="animate-bounce">
-            <ArrowDown className="w-6 h-6 text-gray-600" />
+            <ArrowDown className="w-5 h-5 text-gray-500" />
           </div>
         </div>
       </div>

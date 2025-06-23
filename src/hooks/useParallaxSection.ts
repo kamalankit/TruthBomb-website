@@ -12,6 +12,7 @@ interface ParallaxOptions {
   start?: string;
   end?: string;
   scrub?: boolean | number;
+  disabled?: boolean; // Add option to disable completely
 }
 
 export const useParallaxSection = (options: ParallaxOptions = {}) => {
@@ -19,10 +20,19 @@ export const useParallaxSection = (options: ParallaxOptions = {}) => {
 
   useEffect(() => {
     const element = elementRef.current;
-    if (!element) return;
+    if (!element || options.disabled) return;
+
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.innerWidth <= 1024 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Disable heavy animations on mobile or when reduced motion is preferred
+    if (prefersReducedMotion || isMobile) {
+      return;
+    }
 
     const {
-      speed = 0.5,
+      speed = 0.3, // Reduced from 0.5
       direction = 'up',
       scale = false,
       opacity = false,
@@ -30,26 +40,17 @@ export const useParallaxSection = (options: ParallaxOptions = {}) => {
       trigger,
       start = 'top bottom',
       end = 'bottom top',
-      scrub = true,
+      scrub = 1, // Use lighter scrub value
     } = options;
 
-    const yPercent = direction === 'up' ? -100 * speed : 100 * speed;
+    // Simplified animation object - only essential properties
+    const yPercent = direction === 'up' ? -50 * speed : 50 * speed; // Reduced movement range
+    const animation: any = { yPercent };
 
-    const animation: any = {
-      yPercent,
-    };
-
-    if (scale) {
-      animation.scale = 1 + speed * 0.2;
-    }
-
-    if (opacity) {
-      animation.opacity = 1 - speed * 0.3;
-    }
-
-    if (rotate) {
-      animation.rotation = speed * 10;
-    }
+    // Only add complex properties if explicitly requested
+    if (scale) animation.scale = 1 + speed * 0.1; // Reduced scale effect
+    if (opacity) animation.opacity = 1 - speed * 0.2; // Reduced opacity effect
+    if (rotate) animation.rotation = speed * 5; // Reduced rotation
 
     const scrollTrigger = ScrollTrigger.create({
       trigger: trigger || element,
@@ -59,7 +60,9 @@ export const useParallaxSection = (options: ParallaxOptions = {}) => {
       animation: gsap.to(element, {
         ...animation,
         ease: 'none',
+        overwrite: 'auto', // Prevent animation conflicts
       }),
+      invalidateOnRefresh: true,
     });
 
     return () => {

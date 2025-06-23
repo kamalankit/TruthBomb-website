@@ -1,5 +1,4 @@
 import { useEffect, useRef, useCallback } from 'react';
-import Lenis from '@studio-freight/lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -10,51 +9,41 @@ if (typeof window !== 'undefined') {
 
 interface SmoothScrollOptions {
   duration?: number;
-  easing?: (t: number) => number;
-  direction?: 'vertical' | 'horizontal';
-  gestureDirection?: 'vertical' | 'horizontal' | 'both';
   smooth?: boolean;
-  smoothTouch?: boolean;
-  touchMultiplier?: number;
+  disabled?: boolean;
 }
 
 export const useSmoothScroll = (options: SmoothScrollOptions = {}) => {
-  const lenisRef = useRef<Lenis | null>(null);
-  const rafRef = useRef<number>();
+  const smoothScrollEnabled = useRef(false);
+  
+  const {
+    duration = 1.2,
+    smooth = true,
+    disabled = false
+  } = options;
 
-  const defaultOptions: SmoothScrollOptions = {
-    duration: 1.2,
-    easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Apple-style easing
-    direction: 'vertical',
-    gestureDirection: 'vertical',
-    smooth: true,
-    smoothTouch: false, // Disable on touch for better mobile performance
-    touchMultiplier: 2,
-    ...options,
-  };
-
-  const scrollTo = useCallback((target: string | number, options?: { offset?: number; duration?: number }) => {
-    if (!lenisRef.current) return;
-
-    const offset = options?.offset || -80; // Account for fixed nav
-    const duration = options?.duration || 1.2;
-
+  // Simple scroll to function using native smooth scrolling
+  const scrollTo = useCallback((target: string | number, scrollOptions?: { offset?: number; duration?: number }) => {
+    const offset = scrollOptions?.offset || -80;
+    
     if (typeof target === 'string') {
       const element = document.querySelector(target);
       if (element) {
-        lenisRef.current.scrollTo(element, {
-          offset,
-          duration,
-          easing: defaultOptions.easing,
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition + offset;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: smooth && !disabled ? 'smooth' : 'auto'
         });
       }
     } else {
-      lenisRef.current.scrollTo(target, {
-        duration,
-        easing: defaultOptions.easing,
+      window.scrollTo({
+        top: target,
+        behavior: smooth && !disabled ? 'smooth' : 'auto'
       });
     }
-  }, [defaultOptions.easing]);
+  }, [smooth, disabled]);
 
   const scrollToTop = useCallback(() => {
     scrollTo(0);
@@ -65,54 +54,25 @@ export const useSmoothScroll = (options: SmoothScrollOptions = {}) => {
   }, [scrollTo]);
 
   useEffect(() => {
-    // Initialize Lenis
-    lenisRef.current = new Lenis(defaultOptions);
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    smoothScrollEnabled.current = smooth && !disabled && !prefersReducedMotion;
 
-    // Animation frame loop
-    const raf = (time: number) => {
-      lenisRef.current?.raf(time);
-      rafRef.current = requestAnimationFrame(raf);
-    };
-
-    rafRef.current = requestAnimationFrame(raf);
-
-    // GSAP ScrollTrigger integration
-    lenisRef.current.on('scroll', ScrollTrigger.update);
-
-    gsap.ticker.lagSmoothing(0);
+    // Set CSS scroll behavior
+    if (smoothScrollEnabled.current) {
+      document.documentElement.style.scrollBehavior = 'smooth';
+    } else {
+      document.documentElement.style.scrollBehavior = 'auto';
+    }
 
     // Cleanup
     return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-      }
-      lenisRef.current?.destroy();
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      document.documentElement.style.scrollBehavior = 'auto';
     };
-  }, []);
-
-  // Handle reduced motion preference
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    
-    const handleChange = () => {
-      if (lenisRef.current) {
-        if (mediaQuery.matches) {
-          lenisRef.current.options.smooth = false;
-        } else {
-          lenisRef.current.options.smooth = defaultOptions.smooth || true;
-        }
-      }
-    };
-
-    handleChange();
-    mediaQuery.addEventListener('change', handleChange);
-
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [defaultOptions.smooth]);
+  }, [smooth, disabled]);
 
   return {
-    lenis: lenisRef.current,
+    lenis: null, // Keep for compatibility but return null
     scrollTo,
     scrollToTop,
     scrollToSection,

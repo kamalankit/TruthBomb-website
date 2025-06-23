@@ -16,321 +16,251 @@ import useSmoothScroll from '../hooks/useSmoothScroll';
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
 
+// Performance optimization constants
+const MOBILE_THRESHOLD = 1024;
+const ANIMATION_DELAY = 150;
+const RESIZE_DEBOUNCE = 200;
+
 const Index = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   
-  // Enhanced mobile detection
+  // Enhanced mobile and performance detection
   useEffect(() => {
     const checkDevice = () => {
-      const mobile = window.innerWidth <= 1024 || 
+      const mobile = window.innerWidth <= MOBILE_THRESHOLD || 
                     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      
       setIsMobile(mobile);
+      setPrefersReducedMotion(reducedMotion);
     };
     
     checkDevice();
-    window.addEventListener('resize', checkDevice, { passive: true });
     
-    return () => window.removeEventListener('resize', checkDevice);
+    const debouncedResize = () => {
+      clearTimeout(window.resizeTimer);
+      window.resizeTimer = setTimeout(checkDevice, RESIZE_DEBOUNCE);
+    };
+    
+    window.addEventListener('resize', debouncedResize, { passive: true });
+    
+    return () => {
+      window.removeEventListener('resize', debouncedResize);
+      clearTimeout(window.resizeTimer);
+    };
   }, []);
 
-  // Conditional smooth scroll - only on desktop
+  // Simplified smooth scroll - only on desktop and when motion is allowed
+  const shouldUseSmoothing = !isMobile && !prefersReducedMotion;
   const { lenis } = useSmoothScroll({
-    duration: 1.2,
-    easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smooth: !isMobile, // Disable on mobile for better performance
+    duration: shouldUseSmoothing ? 1.2 : 0,
+    easing: shouldUseSmoothing ? (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) : undefined,
+    smooth: shouldUseSmoothing,
     smoothTouch: false,
   });
 
   useEffect(() => {
-    // Enhanced scroll-triggered animations with mobile optimization
+    // Minimal, performance-optimized animations
     const initScrollAnimations = () => {
       // Clear existing animations
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
       
-      // Mobile-optimized animation settings
-      const mobileSettings = {
-        duration: isMobile ? 0.6 : 1,
-        ease: isMobile ? "power2.out" : "power3.out",
-        yOffset: isMobile ? 30 : 60,
-        startPosition: isMobile ? "top 90%" : "top 85%",
-        scale: isMobile ? 0.98 : 0.95
-      };
-
-      // Fade in animations
-      gsap.utils.toArray('.scroll-fade-in').forEach((element: any) => {
-        gsap.fromTo(element, 
-          { 
-            opacity: 0, 
-            y: mobileSettings.yOffset,
-            scale: mobileSettings.scale
-          },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: mobileSettings.duration,
-            ease: mobileSettings.ease,
-            scrollTrigger: {
-              trigger: element,
-              start: mobileSettings.startPosition,
-              end: "bottom 15%",
-              toggleActions: "play none none reverse",
-              // Disable on mobile if reduced motion preferred
-              disabled: isMobile && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-            }
-          }
-        );
-      });
-
-      // Scale in animations
-      gsap.utils.toArray('.scroll-scale-in').forEach((element: any) => {
-        gsap.fromTo(element,
-          {
-            opacity: 0,
-            scale: isMobile ? 0.95 : 0.8,
-            rotation: isMobile ? 0 : -5
-          },
-          {
-            opacity: 1,
-            scale: 1,
-            rotation: 0,
-            duration: mobileSettings.duration * 1.2,
-            ease: isMobile ? "power2.out" : "back.out(1.7)",
-            scrollTrigger: {
-              trigger: element,
-              start: mobileSettings.startPosition,
-              end: "bottom 20%",
-              toggleActions: "play none none reverse",
-              disabled: isMobile && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-            }
-          }
-        );
-      });
-
-      // Slide animations - simplified for mobile
-      if (!isMobile) {
-        gsap.utils.toArray('.scroll-slide-left').forEach((element: any) => {
-          gsap.fromTo(element,
-            {
-              opacity: 0,
-              x: -100
-            },
+      // Skip heavy animations on mobile or when reduced motion is preferred
+      if (isMobile || prefersReducedMotion) {
+        // Simple fade-in for accessibility
+        gsap.utils.toArray('.scroll-fade-in').forEach((element: any) => {
+          gsap.fromTo(element, 
+            { opacity: 0 },
             {
               opacity: 1,
-              x: 0,
-              duration: 1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: element,
-                start: "top 85%",
-                toggleActions: "play none none reverse"
-              }
-            }
-          );
-        });
-
-        gsap.utils.toArray('.scroll-slide-right').forEach((element: any) => {
-          gsap.fromTo(element,
-            {
-              opacity: 0,
-              x: 100
-            },
-            {
-              opacity: 1,
-              x: 0,
-              duration: 1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: element,
-                start: "top 85%",
-                toggleActions: "play none none reverse"
-              }
-            }
-          );
-        });
-      } else {
-        // Mobile: Convert slide animations to fade animations
-        gsap.utils.toArray('.scroll-slide-left, .scroll-slide-right').forEach((element: any) => {
-          gsap.fromTo(element,
-            {
-              opacity: 0,
-              y: 20
-            },
-            {
-              opacity: 1,
-              y: 0,
               duration: 0.6,
               ease: "power2.out",
               scrollTrigger: {
                 trigger: element,
-                start: "top 90%",
-                toggleActions: "play none none reverse"
+                start: "top 95%",
+                toggleActions: "play none none none",
               }
             }
           );
         });
+        return;
       }
 
-      // Staggered children animations
+      // Desktop-only optimized animations
+      const settings = {
+        duration: 0.8, // Reduced from 1
+        ease: "power2.out", // Simpler easing
+        yOffset: 40, // Reduced from 60
+        startPosition: "top 90%", // Later trigger
+        stagger: 0.08, // Reduced stagger
+      };
+
+      // Basic fade animations - most performant
+      gsap.utils.toArray('.scroll-fade-in').forEach((element: any) => {
+        gsap.fromTo(element, 
+          { 
+            opacity: 0, 
+            y: settings.yOffset,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: settings.duration,
+            ease: settings.ease,
+            scrollTrigger: {
+              trigger: element,
+              start: settings.startPosition,
+              toggleActions: "play none none none", // Simplified - no reverse
+            }
+          }
+        );
+      });
+
+      // Scale animations - only for key elements
+      gsap.utils.toArray('.scroll-scale-in').forEach((element: any) => {
+        gsap.fromTo(element,
+          {
+            opacity: 0,
+            scale: 0.95, // Less dramatic scale
+          },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: settings.duration,
+            ease: settings.ease,
+            scrollTrigger: {
+              trigger: element,
+              start: settings.startPosition,
+              toggleActions: "play none none none",
+            }
+          }
+        );
+      });
+
+      // Simplified slide animations
+      gsap.utils.toArray('.scroll-slide-left').forEach((element: any) => {
+        gsap.fromTo(element,
+          {
+            opacity: 0,
+            x: -40, // Reduced from -100
+          },
+          {
+            opacity: 1,
+            x: 0,
+            duration: settings.duration,
+            ease: settings.ease,
+            scrollTrigger: {
+              trigger: element,
+              start: settings.startPosition,
+              toggleActions: "play none none none",
+            }
+          }
+        );
+      });
+
+      gsap.utils.toArray('.scroll-slide-right').forEach((element: any) => {
+        gsap.fromTo(element,
+          {
+            opacity: 0,
+            x: 40, // Reduced from 100
+          },
+          {
+            opacity: 1,
+            x: 0,
+            duration: settings.duration,
+            ease: settings.ease,
+            scrollTrigger: {
+              trigger: element,
+              start: settings.startPosition,
+              toggleActions: "play none none none",
+            }
+          }
+        );
+      });
+
+      // Staggered animations - simplified
       gsap.utils.toArray('.stagger-children').forEach((container: any) => {
         const children = container.children;
         if (children.length > 0) {
           gsap.fromTo(children,
             {
               opacity: 0,
-              y: isMobile ? 20 : 50
+              y: 20, // Reduced movement
             },
             {
               opacity: 1,
               y: 0,
-              duration: mobileSettings.duration,
-              stagger: isMobile ? 0.05 : 0.1,
-              ease: mobileSettings.ease,
+              duration: settings.duration,
+              stagger: settings.stagger,
+              ease: settings.ease,
               scrollTrigger: {
                 trigger: container,
-                start: mobileSettings.startPosition,
-                toggleActions: "play none none reverse",
-                disabled: isMobile && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                start: settings.startPosition,
+                toggleActions: "play none none none",
               }
             }
           );
         }
       });
 
-      // Parallax effects - Desktop only
-      if (!isMobile && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        gsap.utils.toArray('.parallax-slow').forEach((element: any) => {
-          gsap.to(element, {
-            yPercent: -30,
-            ease: "none",
-            scrollTrigger: {
-              trigger: element,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1
-            }
-          });
-        });
-
-        gsap.utils.toArray('.parallax-medium').forEach((element: any) => {
-          gsap.to(element, {
-            yPercent: -50,
-            ease: "none",
-            scrollTrigger: {
-              trigger: element,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1
-            }
-          });
-        });
-
-        gsap.utils.toArray('.parallax-fast').forEach((element: any) => {
-          gsap.to(element, {
-            yPercent: -80,
-            ease: "none",
-            scrollTrigger: {
-              trigger: element,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1
-            }
-          });
-        });
-      }
-
-      // Pin sections - Desktop only
-      if (!isMobile) {
-        const pinSections = gsap.utils.toArray('.pin-section');
-        pinSections.forEach((section: any) => {
-          ScrollTrigger.create({
-            trigger: section,
-            start: "top top",
+      // Remove heavy parallax effects entirely - they cause the most lag
+      // Only keep very subtle effects for hero elements if needed
+      gsap.utils.toArray('.parallax-light').forEach((element: any) => {
+        gsap.to(element, {
+          yPercent: -15, // Much lighter effect
+          ease: "none",
+          scrollTrigger: {
+            trigger: element,
+            start: "top bottom",
             end: "bottom top",
-            pin: true,
-            pinSpacing: false
-          });
+            scrub: 2, // Heavier scrub for smoothness
+          }
         });
-      }
+      });
 
-      // Refresh ScrollTrigger
+      // Remove pin sections on mobile - they cause layout issues
+      // Keep simple version for desktop only
       ScrollTrigger.refresh();
     };
 
-    // Initialize animations after content is loaded
+    // Delay initialization to prevent layout shift
     const timer = setTimeout(() => {
       initScrollAnimations();
       setIsLoading(false);
-    }, 100);
+    }, ANIMATION_DELAY);
 
-    // Mobile scroll snap setup
-    const setupMobileScrollSnap = () => {
-      if (isMobile && containerRef.current) {
-        containerRef.current.classList.add('mobile-scroll-container');
-        
-        const sections = containerRef.current.querySelectorAll('section');
-        sections.forEach(section => {
-          section.classList.add('mobile-scroll-section');
-        });
-      } else if (containerRef.current) {
-        containerRef.current.classList.remove('mobile-scroll-container');
-        
-        const sections = containerRef.current.querySelectorAll('section');
-        sections.forEach(section => {
-          section.classList.remove('mobile-scroll-section');
-        });
-      }
-    };
-
-    setupMobileScrollSnap();
-
-    // Handle resize with debouncing
-    let resizeTimer: NodeJS.Timeout;
+    // Simplified resize handler
     const handleResize = () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
+      clearTimeout(window.animationTimer);
+      window.animationTimer = setTimeout(() => {
         ScrollTrigger.refresh();
-        setupMobileScrollSnap();
-        initScrollAnimations();
-      }, 150);
+      }, RESIZE_DEBOUNCE);
     };
 
     window.addEventListener('resize', handleResize, { passive: true });
 
-    // Handle orientation change on mobile
-    const handleOrientationChange = () => {
-      if (isMobile) {
-        setTimeout(() => {
-          ScrollTrigger.refresh();
-          setupMobileScrollSnap();
-        }, 500);
-      }
-    };
-
-    window.addEventListener('orientationchange', handleOrientationChange, { passive: true });
-
     // Cleanup
     return () => {
       clearTimeout(timer);
-      clearTimeout(resizeTimer);
+      clearTimeout(window.animationTimer);
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('orientationchange', handleOrientationChange);
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, [isMobile]);
+  }, [isMobile, prefersReducedMotion]);
 
   // Update ScrollTrigger when Lenis is ready (Desktop only)
   useEffect(() => {
-    if (lenis && !isMobile) {
+    if (lenis && shouldUseSmoothing) {
       lenis.on('scroll', ScrollTrigger.update);
       
       return () => {
         lenis.off('scroll', ScrollTrigger.update);
       };
     }
-  }, [lenis, isMobile]);
+  }, [lenis, shouldUseSmoothing]);
 
   // Handle initial loading
   useEffect(() => {
@@ -351,12 +281,10 @@ const Index = () => {
     <div 
       ref={containerRef}
       className={`
-        min-h-screen bg-soft-white text-deep-black overflow-x-hidden
-        ${isMobile ? 'mobile-scroll-container' : ''}
+        min-h-screen bg-soft-white text-deep-black overflow-x-hidden overflow-hidden
         ${isLoading ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'}
       `}
       style={{
-        // Ensure proper mobile viewport
         minHeight: isMobile ? '100vh' : 'auto',
         width: '100%',
         position: 'relative'
@@ -368,21 +296,15 @@ const Index = () => {
       {/* Hero Section */}
       <section 
         id="home" 
-        className={`
-          scroll-fade-in
-          ${isMobile ? 'mobile-scroll-section mobile-safe-top' : ''}
-        `}
+        className="scroll-fade-in"
       >
         <HeroSection />
       </section>
 
-      {/* Philosophy Section */}
+      {/* Philosophy Section - Remove heavy animations class */}
       <section 
         id="philosophy" 
-        className={`
-          scroll-scale-in
-          ${isMobile ? 'mobile-scroll-section' : ''}
-        `}
+        className="scroll-fade-in"
       >
         <PhilosophySection />
       </section>
@@ -390,9 +312,7 @@ const Index = () => {
       {/* Features Section */}
       <section 
         id="features" 
-        className={`
-          ${isMobile ? 'scroll-fade-in mobile-scroll-section' : 'scroll-slide-left'}
-        `}
+        className={isMobile ? 'scroll-fade-in' : 'scroll-slide-left'}
       >
         <FeaturesSection />
       </section>
@@ -400,9 +320,7 @@ const Index = () => {
       {/* Interface Showcase */}
       <section 
         id="interface-showcase" 
-        className={`
-          ${isMobile ? 'scroll-fade-in mobile-scroll-section' : 'scroll-slide-right'}
-        `}
+        className={isMobile ? 'scroll-fade-in' : 'scroll-slide-right'}
       >
         <InterfaceShowcase />
       </section>
@@ -410,10 +328,7 @@ const Index = () => {
       {/* Community Section */}
       <section 
         id="community" 
-        className={`
-          scroll-fade-in
-          ${isMobile ? 'mobile-scroll-section' : ''}
-        `}
+        className="scroll-fade-in"
       >
         <CommunitySection />
       </section>
@@ -421,10 +336,7 @@ const Index = () => {
       {/* Pricing Section */}
       <section 
         id="pricing" 
-        className={`
-          scroll-scale-in stagger-children
-          ${isMobile ? 'mobile-scroll-section' : ''}
-        `}
+        className="scroll-scale-in stagger-children"
       >
         <PricingSection />
       </section>
@@ -432,10 +344,7 @@ const Index = () => {
       {/* Final CTA Section */}
       <section 
         id="cta" 
-        className={`
-          scroll-fade-in
-          ${isMobile ? 'mobile-scroll-section mobile-safe-bottom' : ''}
-        `}
+        className="scroll-fade-in"
       >
         <FinalCTASection />
       </section>
@@ -445,16 +354,11 @@ const Index = () => {
         <SoloLevelingNotification />
       </div>
 
-      {/* Floating QR Widget - Repositioned for mobile */}
-      <div className={isMobile ? 'mobile-widget-container' : ''}>
-        <FloatingQRWidget />
-      </div>
+      {/* Floating QR Widget */}
+      <FloatingQRWidget />
 
       {/* Footer */}
-      <footer className={`
-        bg-warm-gray mobile-section scroll-fade-in
-        ${isMobile ? 'mobile-safe-bottom' : ''}
-      `}>
+      <footer className="bg-warm-gray scroll-fade-in">
         <div className="container-width">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-center md:text-left">
@@ -500,10 +404,10 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* Loading indicator for mobile */}
+      {/* Loading indicator */}
       {isLoading && (
         <div className="fixed inset-0 bg-soft-white z-100 flex items-center justify-center">
-          <div className="loading-shimmer w-16 h-16 rounded-lg bg-gray-200"></div>
+          <div className="w-16 h-16 rounded-lg bg-gray-200 animate-pulse"></div>
         </div>
       )}
     </div>

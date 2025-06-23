@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Menu, X } from 'lucide-react';
 import useSmoothScroll from '../hooks/useSmoothScroll';
 import useScrollSpy from '../hooks/useScrollSpy';
@@ -11,6 +11,7 @@ const Navigation = () => {
   const sectionIds = ['home', 'philosophy', 'features', 'interface-showcase', 'community', 'pricing'];
   const activeSection = useScrollSpy({ sectionIds });
 
+  // Handle scroll state
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -20,67 +21,51 @@ const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Fixed mobile menu management
+  // Mobile menu body scroll lock
   useEffect(() => {
     if (isMobileMenuOpen) {
       // Store current scroll position
       const scrollY = window.scrollY;
       
-      // Add class to body for CSS-based scroll lock
-      document.body.classList.add('mobile-menu-open');
+      // Prevent body scroll
+      document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollY}px`;
-      
-      // Close menu on escape key
-      const handleEscape = (e) => {
-        if (e.key === 'Escape') {
-          setIsMobileMenuOpen(false);
-        }
-      };
-      
-      document.addEventListener('keydown', handleEscape);
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.classList.add('mobile-menu-open');
       
       return () => {
-        document.removeEventListener('keydown', handleEscape);
+        // Restore body scroll
+        const scrollY = document.body.style.top;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.classList.remove('mobile-menu-open');
+        
+        // Restore scroll position
+        if (scrollY) {
+          window.scrollTo(0, parseInt(scrollY || '0') * -1);
+        }
       };
-    } else {
-      // Restore body scroll and position
-      const scrollY = document.body.style.top;
-      document.body.classList.remove('mobile-menu-open');
-      document.body.style.top = '';
-      
-      // Restore scroll position
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      }
     }
   }, [isMobileMenuOpen]);
 
-  // Close mobile menu when clicking outside - Fixed
+  // Close menu on escape key
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isMobileMenuOpen && 
-          !event.target.closest('.mobile-menu-panel') && 
-          !event.target.closest('.mobile-menu-button')) {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
         setIsMobileMenuOpen(false);
       }
     };
 
     if (isMobileMenuOpen) {
-      // Add a small delay to prevent immediate closing
-      const timeoutId = setTimeout(() => {
-        document.addEventListener('touchstart', handleClickOutside, { passive: true });
-        document.addEventListener('click', handleClickOutside);
-      }, 100);
-      
-      return () => {
-        clearTimeout(timeoutId);
-        document.removeEventListener('touchstart', handleClickOutside);
-        document.removeEventListener('click', handleClickOutside);
-      };
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
     }
   }, [isMobileMenuOpen]);
 
-  // Close menu on window resize to desktop
+  // Close menu on resize to desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768 && isMobileMenuOpen) {
@@ -92,28 +77,36 @@ const Navigation = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [isMobileMenuOpen]);
 
-  const handleNavClick = (sectionId) => {
-    // Close mobile menu first
+  // Handle navigation clicks
+  const handleNavClick = useCallback((sectionId) => {
+    // Close mobile menu
     setIsMobileMenuOpen(false);
     
     // Small delay to allow menu to close before scrolling
     setTimeout(() => {
       scrollToSection(sectionId);
     }, 150);
-  };
+  }, [scrollToSection]);
 
-  const toggleMobileMenu = (e) => {
+  // Toggle mobile menu
+  const toggleMobileMenu = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+    setIsMobileMenuOpen(prev => !prev);
+  }, []);
+
+  // Close mobile menu (for overlay clicks)
+  const closeMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
 
   const NavItem = ({ sectionId, label }) => (
     <button 
       onClick={() => handleNavClick(sectionId)}
-      className={`relative text-slate-gray hover:text-deep-black transition-all duration-300 font-medium text-sm group ${
+      className={`relative text-slate-gray hover:text-deep-black transition-all duration-300 font-medium text-sm group focus-ring ${
         activeSection === sectionId ? 'text-champagne-gold' : ''
       }`}
+      type="button"
     >
       {label}
       <span className={`absolute -bottom-1 left-0 h-0.5 bg-champagne-gold transition-all duration-300 ${
@@ -125,11 +118,12 @@ const Navigation = () => {
   const MobileNavItem = ({ sectionId, label }) => (
     <button 
       onClick={() => handleNavClick(sectionId)}
-      className={`mobile-nav-item w-full text-left py-4 px-6 text-base font-medium transition-all duration-200 rounded-xl mx-4 relative ${
+      className={`mobile-nav-item w-full text-left py-4 px-6 text-base font-medium transition-all duration-200 rounded-xl mx-4 relative focus-ring ${
         activeSection === sectionId 
           ? 'text-champagne-gold bg-champagne-gold/10 active' 
           : 'text-deep-black hover:text-champagne-gold hover:bg-gray-50'
       }`}
+      type="button"
     >
       {activeSection === sectionId && (
         <span className="absolute left-6 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-champagne-gold rounded-full" />
@@ -139,7 +133,7 @@ const Navigation = () => {
   );
 
   return (
-    <>
+    <div className="mobile-navigation-wrapper">
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled 
           ? 'bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm' 
@@ -151,7 +145,8 @@ const Navigation = () => {
             <div className="flex items-center">
               <button 
                 onClick={() => handleNavClick('home')}
-                className="text-xl lg:text-2xl font-bold text-deep-black hover:text-champagne-gold transition-colors duration-300"
+                className="text-xl lg:text-2xl font-bold text-deep-black hover:text-champagne-gold transition-colors duration-300 focus-ring"
+                type="button"
               >
                 Truth Bomb
               </button>
@@ -168,17 +163,21 @@ const Navigation = () => {
 
             {/* Desktop CTA Button */}
             <div className="hidden md:block">
-              <button className="bg-cta-gradient text-white font-medium text-sm lg:text-base px-6 lg:px-8 py-2.5 lg:py-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-blush-rose/20">
+              <button 
+                className="bg-cta-gradient text-white font-medium text-sm lg:text-base px-6 lg:px-8 py-2.5 lg:py-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-blush-rose/20 focus-ring"
+                type="button"
+              >
                 Download Now
               </button>
             </div>
 
             {/* Mobile Menu Button */}
             <button 
-              className="mobile-menu-button md:hidden text-deep-black p-3 hover:bg-gray-100 rounded-lg transition-all duration-200 relative z-[60] touch-manipulation"
+              className="mobile-menu-button md:hidden text-deep-black p-3 hover:bg-gray-100 rounded-lg transition-all duration-200 relative z-[60] focus-ring"
               onClick={toggleMobileMenu}
-              aria-label="Toggle mobile menu"
+              aria-label={isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
               aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-menu"
               type="button"
             >
               {isMobileMenuOpen ? (
@@ -192,18 +191,19 @@ const Navigation = () => {
       </nav>
 
       {/* Mobile Menu Overlay */}
-      <div 
-        className={`fixed inset-0 bg-black/50 z-[55] md:hidden transition-opacity duration-300 touch-manipulation ${
-          isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
-        }`}
-        onClick={() => setIsMobileMenuOpen(false)}
-        aria-hidden="true"
-      />
+      {isMobileMenuOpen && (
+        <div 
+          className="mobile-menu-overlay fixed inset-0 bg-black/50 z-[55] md:hidden transition-opacity duration-300"
+          onClick={closeMobileMenu}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Mobile Menu Panel */}
       <div 
+        id="mobile-menu"
         className={`mobile-menu-panel fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white z-[60] md:hidden transform transition-all duration-300 ease-out shadow-2xl ${
-          isMobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+          isMobileMenuOpen ? 'translate-x-0 opacity-100 open' : 'translate-x-full opacity-0'
         }`}
         role="dialog"
         aria-modal="true"
@@ -217,8 +217,8 @@ const Navigation = () => {
         <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-white">
           <h2 id="mobile-menu-title" className="text-xl font-bold text-deep-black">Menu</h2>
           <button 
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 text-deep-black touch-manipulation"
+            onClick={closeMobileMenu}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 text-deep-black focus-ring"
             aria-label="Close menu"
             type="button"
           >
@@ -239,13 +239,14 @@ const Navigation = () => {
         <div className="p-6 border-t border-gray-100 bg-white">
           <button 
             onClick={() => handleNavClick('home')}
-            className="w-full bg-cta-gradient text-white font-semibold text-base py-4 rounded-xl transition-all duration-200 shadow-lg touch-manipulation"
+            className="mobile-menu-cta w-full bg-cta-gradient text-white font-semibold text-base py-4 rounded-xl transition-all duration-200 shadow-lg focus-ring"
+            type="button"
           >
             Download Now
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
